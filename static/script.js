@@ -3,7 +3,7 @@ document.getElementById('befehlForm').addEventListener('submit', function(event)
 
     const befehl = document.getElementById('befehl').value;
 
-    fetch(`/send?befehl=${encodeURIComponent(befehl)}`)
+    fetch(`/unsecure/send?befehl=${encodeURIComponent(befehl)}`)
         .then(response => response.text())
         .then(text => {
             document.getElementById('status').textContent = text;

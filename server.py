@@ -1,13 +1,13 @@
-from flask import Flask, request, jsonify, render_template
+from flask import render_template, Flask, request, jsonify
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/unsecure/static')
 pending_command = None
 
-@app.route('/')
+@app.route('/unsecure')
 def index():
     return render_template('index.html')  # Lädt templates/index.html
 
-@app.route('/send')
+@app.route('/unsecure/send')
 def send_command():
     global pending_command
     befehl = request.args.get('befehl')
@@ -16,7 +16,7 @@ def send_command():
         return f"Befehl '{befehl}' gespeichert."
     return "Kein Befehl angegeben.", 400
 
-@app.route('/fetch')
+@app.route('/unsecure/fetch')
 def fetch_command():
     global pending_command
     if pending_command:
@@ -24,6 +24,5 @@ def fetch_command():
         pending_command = None
         return jsonify({'befehl': cmd})
     return jsonify({'befehl': None})
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3060)
