@@ -8,9 +8,9 @@
 ### static sind die subfiles für die html seiten z.B. ist hier js und css also die funtkionen der webseite und das styling so muss man nicht alles ins html knüppeln ist so n bissi cooler.
 
 # Funktioniert an ende wie?
-## ein static server mit offener ip und offenem Port 80 hostet auf localhost:3060 den server per nginx und proxy_pass wird der localhost an die öffentlichkeit übermittelt (eine doman kann man wenn man will dazwischenschalkten um nicht die ip eingeben zu müssen.)
+### ein static server mit offener ip und offenem Port 80 hostet auf localhost:3060 den server per nginx und proxy_pass wird der localhost an die öffentlichkeit übermittelt (eine doman kann man wenn man will dazwischenschalkten um nicht die ip eingeben zu müssen.)
 
-## zuletzt fragt der esp regelmäßig den nun öffentlichen zugänglichen Server nach Befehlen an und wenn der server welche hat wird er sie dem esp zurückgeben, wenn er keine hat gibt er ihm 'null'.
+### zuletzt fragt der esp regelmäßig den nun öffentlichen zugänglichen Server nach Befehlen an und wenn der server welche hat wird er sie dem esp zurückgeben, wenn er keine hat gibt er ihm 'null'.
 
 ## klingt kompliziert ist aber die einfachste möglichkeit.
 

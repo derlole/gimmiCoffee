@@ -26,4 +26,4 @@ def fetch_command():
     return jsonify({'befehl': None})
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=3060)
+    app.run(host='0.0.0.0', port=3060)
