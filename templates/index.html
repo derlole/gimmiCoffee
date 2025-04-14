@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>ESP Steuerung</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ESP8266 Fernsteuerung</h1>
+
+    <form id="befehlForm">
+        <label for="befehl">Befehl:</label>
+        <input type="text" id="befehl" name="befehl" required>
+        <button type="submit">Senden</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
