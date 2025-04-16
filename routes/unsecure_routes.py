@@ -25,3 +25,6 @@ def fetch_command():
         pending_command = None
         return jsonify({'befehl': cmd})
     return jsonify({'befehl': None})
+# @unsecure.route('/test')
+# def test():
+#     return render_template('test.html')

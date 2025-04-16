@@ -18,3 +18,10 @@
 
 ### von hier aus ist nun auch eine möglichkeit mit echtem SQL server sqlite oder mongoDB möglich, da dieser server sowohl selbst als sql server fungieren kann sqlite dateien sind hier sowieso kein problem und https:// verbindungen sind für echtes python auch kein problem mehr.
 
+## Mögliche Daten zum Speichern und wiedergeben:
+### welcher nutzer hat wann wasser nachgefüllt
+### welcher nutzer hat wann Bohnen nachgefüllt
+### welcher nutzer hat wann einen kaffee bestellt
+### welcher nutzer hat wann die maschine eingeschlatet
+### 
+
