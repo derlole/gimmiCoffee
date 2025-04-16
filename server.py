@@ -33,7 +33,7 @@
 #     app.run(host='0.0.0.0', port=3060)
 
 import eventlet
-eventlet.monkey_patch()  # Stellt sicher, dass eventlet die nötigen Patches vornimmt
+eventlet.monkey_patch()  # Das sollte ganz oben sein, um sicherzustellen, dass eventlet alles patcht
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO
@@ -50,12 +50,8 @@ mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
 def on_mqtt_message(client, userdata, msg):
     payload = msg.payload.decode()
     print(f"[MQTT] {msg.topic}: {payload}")
-    # Stelle sicher, dass das Emitten im richtigen Kontext passiert
-    socketio.start_background_task(target=emit_mqtt_data, topic=msg.topic, payload=payload)
-
-def emit_mqtt_data(topic, payload):
-    # Hier wird die MQTT-Nachricht über Socket.IO an alle verbundenen Clients gesendet
-    socketio.emit("esp_update", {"topic": topic, "payload": payload})
+    # Sende die erhaltenen MQTT-Daten über WebSocket an alle verbundenen Clients
+    socketio.emit("esp_update", {"topic": msg.topic, "payload": payload})
 
 mqtt_client.on_message = on_mqtt_message
 mqtt_client.connect("localhost", 1883)  # MQTT-Broker-Adresse
