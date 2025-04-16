@@ -1,84 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>gimmiCoffee</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>ESP Kontrolle</title>
 </head>
 <body>
-    <header>
-        <div class="site-title">gimmiCoffee</div>
-        <div class="user-actions">
-            <span class="username">Max Mustermann</span>
-            <a href="/logout" class="logout">Logout</a>
-        </div>
-    </header>
+    <h1>ESP Live-Daten</h1>
+    <div id="status">Warte auf Daten...</div>
+    <br>
+    <input id="befehl" type="text" placeholder="z.B. LED ON" />
+    <button onclick="senden()">Senden</button>
 
-    <main class="main-container">
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        const socket = io();
 
-        <section class="left">
-            <div class="info">ESP-Conn Infos</div>
-            <div class="action-button"> MAKE ME A COFFEE...</div>
-            <div class="button-grid">
-                <div class="grid-button">
-                    <div class="top-left-text">Maschiene</div>
-                    <div class="center-number">AUS</div>
-                </div>
-                <div class="grid-button">
-                    <div class="top-left-text">Maschiene</div>
-                    <div class="center-number">Nicht Bereit</div>
-                </div>
-                <div class="grid-button">
-                    <div class="top-left-text">irgendwas kommt hier nocht</div>
-                    <div class="center-number">XXX</div>
-                </div>
-                <div class="grid-button">
-                    <div class="top-left-text">Fehler</div>
-                    <div class="center-number">Wasser leer?</div>
-                </div>
-                <div class="grid-button">
-                    <div class="top-left-text">Wasser</div>
-                    <div class="center-number">Aufgefüllt</div>
-                </div>
-                <div class="grid-button">
-                    <div class="top-left-text">Bohnen</div>
-                    <div class="center-number">Nachgefüllt</div>
-                </div>
-            </div>
-        </section>
+        socket.on("esp_update", (data) => {
+            document.getElementById("status").innerText =
+                `${data.topic}: ${data.payload}`;
+        });
 
-        <section class="right stats-box">
-            <h2 class="stats-title">Statistiken</h2>
-            <div class="clickable">
-                <div class="top-left-text">Coffee made</div>
-                <div class="center-number">XXX</div>
-            </div>
-            <div class="clickable">
-                <div class="top-left-text">Bohnen Füllstand</div>
-                <div class="center-number">XX%</div>
-            </div>
-            <div class="clickable">
-                <div class="top-left-text">Wasser Füllstand</div>
-                <div class="center-number">XX%</div>
-            </div>
-            <div class="clickable">
-                <div class="top-left-text">Bohnen nachgefüllt</div>
-                <div class="center-number">XX</div>
-            </div>
-            <div class="clickable">
-                <div class="top-left-text">Wasser nachgefüllt</div>
-                <div class="center-number">XX</div>
-            </div>
-        </section>
-        
-    </main>
+        function senden() {
+            const val = document.getElementById("befehl").value;
+            socket.emit("send_to_esp", val);
+        }
+    </script>
 </body>
 </html>
-
-
-
-
-
-   <!--<script src="{{ url_for('static', filename='script.js') }}"></script>--> 
