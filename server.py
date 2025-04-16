@@ -46,7 +46,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # MQTT Setup
 mqtt_client = mqtt.Client(protocol=mqtt.MQTTv5)
 
-# Funktion für den Empfang von MQTT-Nachrichten
 def on_mqtt_message(client, userdata, msg):
     payload = msg.payload.decode()
     print(f"[MQTT] {msg.topic}: {payload}")
@@ -55,18 +54,14 @@ def on_mqtt_message(client, userdata, msg):
 
 mqtt_client.on_message = on_mqtt_message
 mqtt_client.connect("localhost", 1883)  # MQTT-Broker-Adresse
-mqtt_client.subscribe("lires/esp1/status")  # MQTT-Topic, das abonniert werden soll
-mqtt_client.loop_start()  # Starten des MQTT-Client-Loops in einem separaten Thread
+mqtt_client.subscribe("lires/esp1/status") 
+mqtt_client.loop_start()  
 
-# Socket.IO → MQTT: Empfangene Daten von Socket.IO an MQTT senden
 @socketio.on("send_to_esp")
 def handle_send(data):
-    mqtt_client.publish("lires/esp1/control", data)  # MQTT-Message senden
+    mqtt_client.publish("lires/esp1/control", data)  
 
-# Blueprint registrieren
 app.register_blueprint(unsecure)
 
-# Starten der Flask-SocketIO-Anwendung
 if __name__ == '__main__':
-    # Verwende socketio.run() statt app.run() für asynchrone WebSocket-Kommunikation
     socketio.run(app, host="0.0.0.0", port=3060)
