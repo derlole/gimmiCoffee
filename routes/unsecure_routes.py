@@ -20,6 +20,6 @@ def send_command():
         return f"Befehl '{pCd}' gespeichert."
     return "Kein Befehl angegeben.", 400
 
-@unsecure.route('/test')
+@unsecure.route('/live')
 def test():
-    return render_template('test.html')
+    return render_template('live.html')
