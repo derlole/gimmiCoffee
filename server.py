@@ -73,4 +73,4 @@ thread.daemon = True
 thread.start()
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=3060)
+    socketio.run(app, host='0.0.0.0', port=3060, allow_unsafe_werkzeug=True)
