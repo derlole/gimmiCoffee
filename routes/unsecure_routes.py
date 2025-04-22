@@ -6,7 +6,7 @@ unsecure = Blueprint('unsecure', __name__, url_prefix='/unsecure')
 
 @unsecure.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', title='gimmiCoffee')
 
 @unsecure.route('/send')
 def send_command():
@@ -22,4 +22,4 @@ def send_command():
 
 @unsecure.route('/live')
 def test():
-    return render_template('live.html')
+    return render_template('live.html', users=[{'name': 'Max'}, {'name': 'Moritz'}, {'name': 'Hans'}])

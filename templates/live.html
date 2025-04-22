@@ -10,7 +10,12 @@
     <p><strong>Test:</strong> <span id="test"></span></p>
     <p><strong>Status:</strong> <span id="status"></span></p>
     <p><strong>Counter:</strong> <span id="counter"></span></p>
-
+    <h1>Benutzer</h1>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.name }}</li>
+        {% endfor %}
+    </ul>
     <script>
         const socket = io();
     
