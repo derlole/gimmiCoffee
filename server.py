@@ -15,12 +15,9 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 app.register_blueprint(unsecure)
 app.register_blueprint(esp)
 
-# Simuliere regelmäßige Daten-Updates
-
 def send_data():
     counter = 0
     while True:
-        #print(f"Sending data: {counter}")
         data = {
             'test': 'Live-Daten',
             'status': 'OK',
@@ -28,7 +25,7 @@ def send_data():
         }
         socketio.emit('update_data', data)
         counter += 1
-        time.sleep(2)  # alle 2 Sekunden neue Daten
+        time.sleep(2)
 
 # Hintergrund-Thread starten
 thread = threading.Thread(target=send_data)
