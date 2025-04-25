@@ -80,7 +80,12 @@
             fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById("machine-status").innerText = data.status;
+                    console.log(data);
+                    if (data.command === 'machineToggle') {
+                        document.getElementById("machine-status").innerText = "PENDING";
+                    } else {
+                        document.getElementById("machine-status").innerText = "SOME_ERR";
+                    }
                 });
         }
     </script>

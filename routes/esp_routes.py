@@ -18,6 +18,7 @@ def fetch_command():
 @esp.route('/toggle-machine', methods=['POST'])
 def toggle_machine():
     pCd = shared.pending_command
+    shared.reset_command()
     pCd['command'] = 'machineToggle'
     pCd['command-URL'] = 'NO_URL'
     pCd['command-expected'] = 'machineStatusResponse'
