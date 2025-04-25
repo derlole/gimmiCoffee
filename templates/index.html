@@ -23,16 +23,16 @@
             <div class="info">ESP-Conn Infos</div>
             <div class="action-button"> MAKE ME A COFFEE...</div>
             <div class="button-grid">
-                <div class="grid-button">
-                    <div class="top-left-text">Maschiene</div>
-                    <div class="center-number">AUS</div>
+                <div class="grid-button" onclick="toggleMachine()">
+                    <div class="top-left-text">Maschine</div>
+                    <div class="center-number" id="machine-status">AUS</div>
                 </div>
                 <div class="grid-button">
                     <div class="top-left-text">Maschiene</div>
                     <div class="center-number">Nicht Bereit</div>
                 </div>
                 <div class="grid-button">
-                    <div class="top-left-text">irgendwas kommt hier nocht</div>
+                    <div class="top-left-text">irgendwas kommt hier noch</div>
                     <div class="center-number">XXX</div>
                 </div>
                 <div class="grid-button">
@@ -75,6 +75,15 @@
         </section>
         
     </main>
+    <script>
+        function toggleMachine() {
+            fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("machine-status").innerText = data.status;
+                });
+        }
+    </script>
 </body>
 </html>
 
