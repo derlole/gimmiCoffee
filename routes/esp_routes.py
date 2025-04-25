@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 import routes.shared as shared
 from flask import Flask, jsonify, request
 import paho.mqtt.client as mqtt
+import json
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
 
 MQTT_BROKER = "localhost"  # oder IP/Domain
@@ -24,7 +25,7 @@ def toggle_machine():
 
     client = mqtt.Client()
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    client.publish(MQTT_TOPIC, pCd)
+    client.publish(MQTT_TOPIC, json.dumps(pCd))
     client.disconnect()
 
-    return jsonify({"status": pCd})
+    return jsonify({"status": json.dumps(pCd)})
