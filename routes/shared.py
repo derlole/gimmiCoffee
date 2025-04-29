@@ -6,5 +6,5 @@ def reset_command():
         'command': None,
         'command-URL': None,
         'command-expected': None,
-        'command-expected-URL': None
+        'command-expected-topic': None
     }

@@ -21,29 +21,30 @@
 
         <section class="left">
             <div class="info">ESP-Conn Infos</div>
-            <div class="action-button"> MAKE ME A COFFEE...</div>
+
             <div class="button-grid">
-                <div class="grid-button" onclick="toggleMachine()">
+                <div class="grid-button deniePress">
+                    <div class="top-left-text">Kaffeeee</div>
+                    <div class="center-number">Kaffee Machen</div>
+                </div>
+                <div class="grid-button initBackRed" id="machine-status-butt" onclick="toggleMachine()">
                     <div class="top-left-text">Maschine</div>
                     <div class="center-number" id="machine-status">AUS</div>
                 </div>
-                <div class="grid-button">
+                <div class="grid-button deniePress">
                     <div class="top-left-text">Maschiene</div>
                     <div class="center-number">Nicht Bereit</div>
                 </div>
-                <div class="grid-button">
-                    <div class="top-left-text">irgendwas kommt hier noch</div>
-                    <div class="center-number">XXX</div>
-                </div>
-                <div class="grid-button">
+
+                <div class="grid-button deniePress">
                     <div class="top-left-text">Fehler</div>
                     <div class="center-number">Wasser leer?</div>
                 </div>
-                <div class="grid-button">
+                <div class="grid-button deniePress">
                     <div class="top-left-text">Wasser</div>
                     <div class="center-number">Aufgefüllt</div>
                 </div>
-                <div class="grid-button">
+                <div class="grid-button deniePress">
                     <div class="top-left-text">Bohnen</div>
                     <div class="center-number">Nachgefüllt</div>
                 </div>
@@ -77,17 +78,19 @@
     </main>
     <script>
         function toggleMachine() {
-            fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
-                .then(res => res.json())
-                .then(data => {
-                    //console.log(data);
-                    const inner = JSON.parse(data.status);
-                    if (inner.command === 'machineToggle') {
-                        document.getElementById("machine-status").innerText = "PENDING";
-                    } else {
-                        document.getElementById("machine-status").innerText = "SOME_ERR";
-                    }
-                });
+            document.getElementById("machine-status").innerText = "PENDING";
+            document.getElementById("machine-status-butt").classList.add("blink-orange");
+            // fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
+            //     .then(res => res.json())
+            //     .then(data => {
+            //         //console.log(data);
+            //         const inner = JSON.parse(data.status);
+            //         if (inner.command === 'machineToggle') {
+
+            //         } else {
+            //             document.getElementById("machine-status").innerText = "SOME_ERR";
+            //         }
+            //     });
         }
     </script>
 </body>
