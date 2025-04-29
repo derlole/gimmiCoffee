@@ -15,7 +15,7 @@ def fetch_command():
     shared.reset_command()
     return jsonify(pCd)
 
-@esp.route('/toggle-machine', methods=['POST'])
+@esp.route('/toggle-machine', methods=['GET'])
 def toggle_machine():
 
     testData = {'test': 'Live-Daten', 'status': 'OK', 'counter': 0}
