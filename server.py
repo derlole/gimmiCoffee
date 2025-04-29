@@ -4,17 +4,43 @@ from routes.unsecure_routes import unsecure
 from routes.esp_routes import esp
 import threading
 import time
+import paho.mqtt.client as mqtt
 
+MQTT_BROKER = "localhost"
+MQTT_PORT = 1883
+MQTT_TOPIC = "coffee/status"
 
 app = Flask(__name__, static_url_path='/unsecure/static')
-app.config['SECRET_KEY'] = 'super-secret-key'  # beliebig ändern
+app.config['SECRET_KEY'] = 'super-secret-key'
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
-
-# Blueprint registrieren
+# Blueprints registrieren
 app.register_blueprint(unsecure)
 app.register_blueprint(esp)
 
+# MQTT Callback-Funktionen
+def on_connect(client, userdata, flags, rc):
+    print(f"[MQTT] Verbunden mit Code {rc}")
+    client.subscribe(MQTT_TOPIC)
+    print(f"[MQTT] Subscribed to topic: {MQTT_TOPIC}")
+
+def on_message(client, userdata, msg):
+    print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
+    # Optional an Clients senden
+    socketio.emit('mqtt_message', {
+        'topic': msg.topic,
+        'message': msg.payload.decode()
+    })
+
+# MQTT-Thread starten
+def mqtt_thread():
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    client.loop_forever()
+
+# Dummy-Daten-Thread
 def send_data():
     counter = 0
     while True:
@@ -27,10 +53,9 @@ def send_data():
         counter += 1
         time.sleep(2)
 
-# Hintergrund-Thread starten
-thread = threading.Thread(target=send_data)
-thread.daemon = True
-thread.start()
+# Beide Threads starten
+threading.Thread(target=send_data, daemon=True).start()
+threading.Thread(target=mqtt_thread, daemon=True).start()
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=3060, allow_unsafe_werkzeug=True)
