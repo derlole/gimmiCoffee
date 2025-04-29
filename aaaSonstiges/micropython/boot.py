@@ -7,7 +7,7 @@ gc.collect()
 # (SSID: Passwort)
 known_networks = {
     "Vodafone-9454": "AchXHta93YCTgC3M",
-    "no": "", 
+    "WGLAn": "2Bierund1Pizza!", 
     "placeholder1": "placeholder1",
     "placeholder2": "placeholder2"
 }
