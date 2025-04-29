@@ -4,7 +4,7 @@ import json
 import time
 
 # MQTT-Konfiguration
-MQTT_BROKER = "broker.hivemq.com"  # oder Ihr eigener MQTT Broker
+MQTT_BROKER = "lires.de"  # oder Ihr eigener MQTT Broker
 MQTT_PORT = 1883
 MQTT_CLIENT_ID = "esp8266_coffee"
 MQTT_TOPIC_STATUS = b"coffee/status"
@@ -19,6 +19,10 @@ Wasser_voll = Pin(13, Pin.IN)
 # --- Ausgänge ---
 einschalten = Pin(0, Pin.OUT)
 starten = Pin(15, Pin.OUT)
+# --- Status ---
+kaffee_machen =0
+vorbereitung = 0
+kaffee_fertig = 0
 
 def mqtt_callback(topic, msg):
     print('Empfangen:', topic, msg)
@@ -26,9 +30,9 @@ def mqtt_callback(topic, msg):
         command = json.loads(msg.decode())
         if topic == MQTT_TOPIC_COMMAND:
             if 'einschalten' in command:
-                einschalten.value(command['einschalten'])
+                einschalten(command['einschalten'])
             if 'starten' in command:
-                starten.value(command['starten'])
+                starten(command['starten'])
     except Exception as e:
         print('Fehler bei Kommando-Verarbeitung:', e)
 
@@ -60,13 +64,14 @@ while True:
                 "bereit": bereit.value(),
                 "fehler": fehler.value(),
                 "bohnen_voll": bohnen_voll.value(),
-                "wasser_voll": Wasser_voll.value(),
+                "Wasser_voll": Wasser_voll.value(),
                 "einschalten": einschalten.value(),
                 "starten": starten.value(),
+
                 # ---komunikation---
-                "kaffee_machen": kaffe_machen.value(),
-                "vorbereitung": vorbereitung.value(),
-                "kaffee_fertig": kaffee_fertig.value(),
+                "kaffee_machen": kaffee_machen,
+                "vorbereitung": vorbereitung,
+                "kaffee_fertig": kaffee_fertig,
                 
             }
             client.publish(MQTT_TOPIC_STATUS, json.dumps(status))
@@ -83,67 +88,49 @@ while True:
         print('Fehler in Hauptschleife:', e)
         time.sleep(5)
         client = None
-            #Einschalten der Kaffeemaschine
-            if (kaffe_machen.value() == 1)
-            {
-                einschalten = 1
-                delay(1000);
-                einschalten=0
-            }
-            
-            #Starten der Kaffeemaschine
-            
-            if (kaffe_machen.value() == 1 && bereit == 1&&fehler==0)
-            {
-                starten = 1
-                delay(1000)
-                starten=0
-                gestartet =1
-            }
-            else
-            {
-                starten = 0
-                gestartet = 0
-            }
-            #Vorbereitung der Kaffeemaschine
-            if (bereit == 0&&an==1&&fehler==0)
-            {
-                vorbereitung.value()=1 
-            }
-            else
-            {
-                vorbereitung.value()=0
-            }
-            #Kaffeemaschine fertig
-            if (bereit == 1&&an==1&&fehler==0&& gestartet==1)
-            {
-                kaffee_fertig.value()=1
-                gestartet = 0
-            }
-            else
-            {
-                kaffee_fertig.value()=0
-            }
-
-            #Fehlerbehandlung
-            if(fehler==1)
-            {
-                fehler.value()=1
-            }   
-            else
-            {
-                fehler.value()=0
-            }
-    if (bohnen_voll == 1)
-    {
-        bohnen_voll.value()=1
-    }
-    if (Wasser_voll == 1)
-    {
-        Wasser_voll.value()=1
-    }
     
+            # Einschalten der Kaffeemaschine
+    if kaffee_machen == 1:
+        einschalten(1)
+        time.sleep(1)
+        einschalten(0)
+            
+            
+            # Starten der Kaffeemaschine
+    if kaffee_machen == 1 and an() == 1 and bereit() == 1 and fehler() == 0:
+                starten(1)
+                time.sleep(1)
+                starten(0)
+                gestartet = 1
+    else:
+                starten(0)
+                gestartet = 0
+            #Vorbereitung der Kaffeemaschine
+    if bereit == 0 and an==1 and fehler==0 :
+            
+                vorbereitung=1
+            
+            # Vorbereitung der Kaffeemaschine
+    if bereit() == 0 and an() == 1 and fehler() == 0:
+                vorbereitung = 1
+            
+            
+           
+            # Kaffeemaschine fertig
+    if bereit() == 1 and an() == 1 and fehler() == 0 and gestartet == 1:
+                kaffee_fertig=1
+                gestartet = 0
+    else:
+               kaffee_fertig=0            
+    
+    # Fehlerbehandlung
+    if fehler() == 1:
+        fehler(1)
+    else:
+        fehler(0)
 
-            
-            
-                
+    if bohnen_voll() == 1:
+        bohnen_voll(1)
+
+    if Wasser_voll() == 1:
+        Wasser_voll(1)
