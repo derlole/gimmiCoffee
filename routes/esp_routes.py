@@ -30,7 +30,7 @@ def esp_online():
     print(f"ESP ONLINE von IP: {esp_ip}, roher IP: {sender_ip}")
     return jsonify({"status": "ok"})
 
-@esp.route('/toggle-machine', methods=['GET'])
+@esp.route('/toggle-machine', methods=['POST'])
 def toggle_machine():
     print("ESP: toggle-machine")
     randID = random.randint(1000, 9999)
