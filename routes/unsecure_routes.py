@@ -20,6 +20,6 @@ def send_command():
         return f"Befehl '{pCd}' gespeichert."
     return "Kein Befehl angegeben.", 400
 
-@unsecure.route('/live')
-def test():
-    return render_template('live.html', users=[{'name': 'Max'}, {'name': 'Moritz'}, {'name': 'Hans'}])
+# @unsecure.route('/live')
+# def test():
+#     return render_template('live.html', users=[{'name': 'Max'}, {'name': 'Moritz'}, {'name': 'Hans'}])

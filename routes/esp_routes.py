@@ -15,6 +15,15 @@ def fetch_command():
     shared.reset_command()
     return jsonify(pCd)
 
+@esp.route('/online', methods=['POST'])
+def esp_online():
+    data = request.get_json()
+    sender_ip = request.remote_addr
+    esp_ip = data.get("ip", "unknown")
+
+    print(f"ESP ONLINE von IP: {esp_ip}, roher IP: {sender_ip}")
+    return jsonify({"status": "ok"})
+
 @esp.route('/toggle-machine', methods=['GET'])
 def toggle_machine():
 

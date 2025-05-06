@@ -8,7 +8,8 @@ import paho.mqtt.client as mqtt
 
 MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
-MQTT_TOPIC = "coffee/status"
+MQTT_TOPIC_SUB = "coffee/status"
+MQTT_TOPIC_SEND = "coffee/command"
 
 app = Flask(__name__, static_url_path='/unsecure/static')
 app.config['SECRET_KEY'] = 'super-secret-key'
@@ -21,8 +22,8 @@ app.register_blueprint(esp)
 # MQTT Callback-Funktionen
 def on_connect(client, userdata, flags, rc):
     print(f"[MQTT] Verbunden mit Code {rc}")
-    client.subscribe(MQTT_TOPIC)
-    print(f"[MQTT] Subscribed to topic: {MQTT_TOPIC}")
+    client.subscribe(MQTT_TOPIC_SUB)
+    print(f"[MQTT] Subscribed to topic: {MQTT_TOPIC_SUB}")
 
 def on_message(client, userdata, msg):
     print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
@@ -41,20 +42,22 @@ def mqtt_thread():
     client.loop_forever()
 
 # Dummy-Daten-Thread
-def send_data():
-    counter = 0
-    while True:
-        data = {
-            'test': 'Live-Daten',
-            'status': 'OK',
-            'counter': counter
-        }
-        socketio.emit('update_data', data)
-        counter += 1
-        time.sleep(2)
+# def send_data():
+#     counter = 0
+#     while True:
+#         data = {
+#             'test': 'Live-Daten',
+#             'status': 'OK',
+#             'counter': counter
+#         }
+#         socketio.emit('update_data', data)
+#         counter += 1
+#         time.sleep(2)
 
 # Beide Threads starten
-threading.Thread(target=send_data, daemon=True).start()
+#threading.Thread(target=send_data, daemon=True).start()
+
+
 threading.Thread(target=mqtt_thread, daemon=True).start()
 
 if __name__ == '__main__':
