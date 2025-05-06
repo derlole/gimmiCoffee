@@ -18,7 +18,7 @@ def fetch_command():
 @esp.route('/online', methods=['POST'])
 def esp_online():
     data = request.get_json()
-    sender_ip = request.remote_addr
+    sender_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     esp_ip = data.get("ip", "unknown")
 
     print(f"ESP ONLINE von IP: {esp_ip}, roher IP: {sender_ip}")
