@@ -80,6 +80,11 @@
         function toggleMachine() {
             document.getElementById("machine-status").innerText = "PENDING";
             document.getElementById("machine-status-butt").classList.add("blink-orange");
+            fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                });
         }
     </script>
 </body>
