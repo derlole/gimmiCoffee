@@ -3,7 +3,13 @@ import routes.shared as shared
 from flask import Flask, jsonify, request
 import paho.mqtt.client as mqtt
 import json
+import random
+import sqlite3
+import os
+
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
+
+DB_PATH = os.path.join(os.path.dirname(__file__), '../db/commands.db')
 
 MQTT_BROKER = "localhost"  # oder IP/Domain
 MQTT_PORT = 1883
@@ -26,11 +32,23 @@ def esp_online():
 
 @esp.route('/toggle-machine', methods=['GET'])
 def toggle_machine():
+    randID = random.randint(1000, 9999)
+    fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}
 
-    testData = {'test': 'Live-Daten', 'status': 'OK', 'counter': 0}
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO commands (command, status, command_id)
+        VALUES (?, ?, ?)
+    """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
+
+    conn.commit()
+    conn.close()
+
     client = mqtt.Client()
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    client.publish(MQTT_TOPIC, json.dumps(testData))
+    client.publish(MQTT_TOPIC, json.dumps(fullCommand))
     client.disconnect()
 
-    return jsonify({"status": json.dumps(testData)})
+    return jsonify({"status": json.dumps(fullCommand)})
