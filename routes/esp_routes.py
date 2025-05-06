@@ -32,9 +32,10 @@ def esp_online():
 
 @esp.route('/toggle-machine', methods=['GET'])
 def toggle_machine():
+    print("ESP: toggle-machine")
     randID = random.randint(1000, 9999)
     fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}
-
+    print("ESP: toggle-machine 1")
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -45,10 +46,10 @@ def toggle_machine():
 
     conn.commit()
     conn.close()
-
+    print("ESP: toggle-machine 2")
     client = mqtt.Client()
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.publish(MQTT_TOPIC, json.dumps(fullCommand))
     client.disconnect()
-
+    print("ESP: toggle-machine 3")
     return jsonify({"status": json.dumps(fullCommand)})
