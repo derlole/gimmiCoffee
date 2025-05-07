@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Dieses Skript erstellt eine SQLite-Datenbank mit einer Tabelle für Befehle.
+
 import os
 import sqlite3
 

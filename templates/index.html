@@ -7,6 +7,7 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='gimmiCoffee_Logo.png') }}" type="image/png">
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 </head>
 <body>
     <header>
@@ -16,23 +17,43 @@
             <a href="/logout" class="logout">Logout</a>
         </div>
     </header>
-
+    <div id="waterData" style="display: none;">{{ water | tojson }}</div>
+    <div id="beansData" style="display: none;">{{ beans | tojson }}</div>
+    <div id="machineData" style="display: none;">{{ machine | tojson }}</div>
+    <div id="espData" style="display: none;">{{ esp_conn_infos | tojson }}</div>
     <main class="main-container">
 
         <section class="left">
-            <div class="info">ESP-Conn Infos</div>
-
+            <div class="info" id="infoMain">
+                <div style="flex: 1; display: flex; align-items: center;">
+                  <strong>ESP-Connection Infos</strong>
+                </div>
+              
+                <div style="flex: 1;">
+                  <p><strong>Global IP:</strong> <span id="ip_global">–</span></p>
+                  <p><strong>Local IP:</strong> <span id="ip_local">–</span></p>
+                </div>
+              
+                <div style="flex: 1;">
+                  <p><strong>Valid Connection:</strong> <span id="valid_connection">–</span></p>
+                  <p><strong>Last Seen:</strong> <span id="last_seen">–</span></p>
+                </div>
+              
+                <div class="validationButtonOuter">
+                  <div onclick="tryValidateConnection()" class="validButt" id="validButt">Validate Connection</div>
+                </div>
+              </div>
             <div class="button-grid">
                 <div class="grid-button deniePress">
                     <div class="top-left-text">Kaffeeee</div>
                     <div class="center-number">Kaffee Machen</div>
                 </div>
-                <div class="grid-button initBackRed" id="machine-status-butt" onclick="toggleMachine()">
+                <div class="grid-button initBackRed deniePress" id="machine-status-butt" onclick="toggleMachine()">
                     <div class="top-left-text">Maschine</div>
                     <div class="center-number" id="machine-status">AUS</div>
                 </div>
                 <div class="grid-button deniePress">
-                    <div class="top-left-text">Maschiene</div>
+                    <div class="top-left-text">Maschine</div>
                     <div class="center-number">Nicht Bereit</div>
                 </div>
 
@@ -40,13 +61,13 @@
                     <div class="top-left-text">Fehler</div>
                     <div class="center-number">Wasser leer?</div>
                 </div>
-                <div class="grid-button deniePress">
+                <div class="grid-button defaultGray">
                     <div class="top-left-text">Wasser</div>
-                    <div class="center-number">Aufgefüllt</div>
+                    <div class="center-number">Nachgefüllt?</div>
                 </div>
-                <div class="grid-button deniePress">
+                <div class="grid-button defaultGray">
                     <div class="top-left-text">Bohnen</div>
-                    <div class="center-number">Nachgefüllt</div>
+                    <div class="center-number">Nachgefüllt?</div>
                 </div>
             </div>
         </section>
@@ -59,34 +80,26 @@
             </div>
             <div class="clickable">
                 <div class="top-left-text">Bohnen Füllstand</div>
-                <div class="center-number">XX%</div>
+                <div class="center-number" id="beans-fill">XX%</div>
             </div>
             <div class="clickable">
                 <div class="top-left-text">Wasser Füllstand</div>
-                <div class="center-number">XX%</div>
+                <div class="center-number" id="water-fill">XX%</div>
             </div>
-            <div class="clickable">
+            <div class="clickable not">
                 <div class="top-left-text">Bohnen nachgefüllt</div>
-                <div class="center-number">XX</div>
+                <div class="center-number" id="beans-filled">XX</div>
             </div>
-            <div class="clickable">
+            <div class="clickable not">
                 <div class="top-left-text">Wasser nachgefüllt</div>
-                <div class="center-number">XX</div>
+                <div class="center-number" id="water-filled">XX</div>
             </div>
         </section>
         
     </main>
-    <script>
-        function toggleMachine() {
-            document.getElementById("machine-status").innerText = "PENDING";
-            document.getElementById("machine-status-butt").classList.add("blink-orange");
-            fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                });
-        }
-    </script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='socketio.js') }}"></script>
 </body>
 </html>
 
@@ -94,4 +107,4 @@
 
 
 
-   <!--<script src="{{ url_for('static', filename='script.js') }}"></script>--> 
+

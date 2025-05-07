@@ -1,25 +1,30 @@
 from flask import Blueprint, render_template, request, jsonify
-import routes.shared as shared
 unsecure = Blueprint('unsecure', __name__, url_prefix='/unsecure')
+from modules.persistence import load_dict, save_dict
+from modules.persistence import esp_conn_infos
+# from flask_socketio import SocketIO
+from modules.socketio import resend_static_data
 
-
+# def resend_static_data():
+#     water = load_dict("water")
+#     beans = load_dict("beans")
+#     machine = load_dict("machine")
+#     socketio.emit('static_data', {
+#         'water': water,
+#         'beans': beans,
+#         'machine': machine,
+#         'esp_conn_infos': esp_conn_infos
+# })
 
 @unsecure.route('/')
 def index():
-    return render_template('index.html', title='gimmiCoffee')
+    water = load_dict("water")
+    beans = load_dict("beans")
+    machine = load_dict("machine")
+    print(f"Water: {water}, Beans: {beans}, Machine: {machine}")
+    return render_template('index.html', title='gimmiCoffee', water=water, beans=beans, machine=machine, esp_conn_infos=esp_conn_infos)
 
-@unsecure.route('/send')
-def send_command():
-    pCd = shared.pending_command
-    befehl = request.args.get('befehl')
-    if befehl:
-        pCd['command'] = befehl
-        pCd['command-URL'] = '/unsecure/esp/someURI'
-        pCd.update({'extra': 'test'})
-        print(pCd)
-        return f"Befehl '{pCd}' gespeichert."
-    return "Kein Befehl angegeben.", 400
-
-# @unsecure.route('/live')
-# def test():
-#     return render_template('live.html', users=[{'name': 'Max'}, {'name': 'Moritz'}, {'name': 'Hans'}])
+@unsecure.route('/update')
+def update():
+    resend_static_data()
+    return jsonify({"status": "ok"})

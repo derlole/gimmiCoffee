@@ -1,11 +1,13 @@
 from flask import Blueprint, render_template, request, jsonify
-import routes.shared as shared
 from flask import Flask, jsonify, request
 import paho.mqtt.client as mqtt
 import json
 import random
 import sqlite3
 import os
+from modules.persistence import esp_conn_infos
+import datetime
+from modules.socketio import resend_static_data
 
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
 
@@ -15,11 +17,6 @@ MQTT_BROKER = "localhost"  # oder IP/Domain
 MQTT_PORT = 1883
 MQTT_TOPIC = "coffee/command"
 
-@esp.route('/')
-def fetch_command():
-    pCd = shared.pending_command
-    shared.reset_command()
-    return jsonify(pCd)
 
 @esp.route('/online', methods=['POST'])
 def esp_online():
@@ -27,6 +24,12 @@ def esp_online():
     sender_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     esp_ip = data.get("ip", "unknown")
 
+    esp_conn_infos["ip_local"] = esp_ip
+    esp_conn_infos["ip_global"] = sender_ip
+    esp_conn_infos["last_seen"] = datetime.now()
+    esp_conn_infos["connection_valid"] = True
+    resend_static_data()
+    
     print(f"ESP ONLINE von IP: {esp_ip}, roher IP: {sender_ip}")
     return jsonify({"status": "ok"})
 

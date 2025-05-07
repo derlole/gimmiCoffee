@@ -1,0 +1,8 @@
+{
+  "state": "idle",
+  "connected": false,
+  "ready": false,
+  "peding_command": false,
+  "error": false,
+  "lastConnectionProof": "2025-05-06 20:56:49.436343+00:00"
+}

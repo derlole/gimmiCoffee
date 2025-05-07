@@ -115,16 +115,15 @@ header {
 .button-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
-    max-height: 70vh;
-    overflow-y: auto;
+    gap: 20px;
+    max-height: 73vh;
 }
 
 .grid-button {
     flex: 1 1 calc(50% - 15px);
-    background: #95a5a6;
-    color: white;
-    height: 23vh;
+    background: #818e8f;
+    /* color: white; */
+    height: 22vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -139,7 +138,7 @@ header {
     border: 2px solid #000;
     padding: 20px;
     border-radius: 10px;
-    background: #f0f0f0;
+    background: #c4c4c4;
     overflow-y: auto;
 }
 
@@ -156,13 +155,13 @@ header {
     position: relative;
     width: 100%;
     border-radius: 10px;
-    background: #2ecc71;
+    background: #5f5f5f;
     font-family: Arial, sans-serif;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     flex: none;
     height: 25vh;
     transition: background 0.3s;
@@ -170,21 +169,24 @@ header {
 
 
 .clickable:hover {
-    background: #27ae60;
+    background: #505050;
     cursor: pointer;
+}
+.not:hover {
+    background: #5f5f5f;
 }
 .clickable .top-left-text {
     position: absolute;
     top: 10px;
     left: 12px;
     font-size: 24px;
-    color: #000000;
+    color: #ffffff;
 }
 
 .clickable .center-number {
     font-size: 48px;
     font-weight: bold;
-    color: #222;
+    color: #ffffff;
 }
 .grid-button .top-left-text {
     position: absolute;
@@ -202,9 +204,11 @@ header {
     color: #222;
     text-align: center;
 }
-.deniePress:hover{
-    cursor: not-allowed;
+.defaultGray:hover {
+    background: #6a7274;
+    
 }
+
 .blink-orange {
   background-color: orange;
   animation: pulse-orange 1.0s infinite;
@@ -219,6 +223,34 @@ header {
 background-color: red;
 }
 .initBackRed:Hover{
-    background-color: rgb(255, 37, 37);
+    background-color: rgb(252, 47, 47);
 }
-  
+.deniePress:hover{
+    cursor: not-allowed;
+}
+.initBackRed:hover.deniePress {
+    background-color: red !important;
+    cursor: not-allowed;
+}
+.validationButtonOuter{
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    flex: 1;
+}
+.validButt{
+    background-color: green;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+.validButt:hover{
+    cursor: pointer;
+    background-color: rgb(0, 151, 0);
+}
+.validButt:hover.deniePress{
+    background-color: green !important;
+}
+.deniePress:hover{
+    cursor: not-allowed;
+}
