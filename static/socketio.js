@@ -5,10 +5,16 @@ function gebId(id) {
 const socket = io();
     
 socket.on('static_data', (data) => {
+    console.log(data); 
+    console.log("1");
     gebId("beans-fill").innerText = data.beans.fill + "%"
     gebId("water-fill").innerText = data.water.fill + "%"
     gebId("beans-filled").innerText = data.beans.refilled
     gebId("water-filled").innerText = data.water.refilled
+    gebId("ip_global").innerText = data.esp_conn_infos.ip_global
+    gebId("ip_local").innerText = data.esp_conn_infos.ip_local
+    gebId("valid_connection").innerText = data.esp_conn_infos.connection_valid
+    gebId("last_seen").innerText = data.esp_conn_infos.last_seen
     if (data.water.fill < 20) {
         gebId("water-fill").parentElement.classList.add("blink-orange");
     }else {

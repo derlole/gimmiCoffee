@@ -6,7 +6,7 @@ from datetime import datetime
 
 socketio = SocketIO(cors_allowed_origins="*", async_mode='threading')
 
-
+# function to change the datetime format to isoformat because json does not support datetime
 def convert_datetimes(obj):
     if isinstance(obj, dict):
         return {k: convert_datetimes(v) for k, v in obj.items()}
