@@ -25,7 +25,7 @@ socket.on('static_data', (data) => {
     }else {
         gebId("beans-fill").parentElement.classList.remove("blink-orange");
     }
-    if (esp_conn_infos.connection_valid) {
+    if (data.esp_conn_infos.connection_valid) {
         gebId("validButt").classList.add("deniePress");
         gebId("infoMain").classList.remove("blink-orange");
         gebId("machine-status-butt").classList.remove("deniePress");

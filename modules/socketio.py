@@ -13,7 +13,7 @@ def convert_datetimes(obj):
     elif isinstance(obj, list):
         return [convert_datetimes(i) for i in obj]
     elif isinstance(obj, datetime):
-        return obj.isoformat()
+        return obj.strftime("%d.%m.%Y %H:%M")
     else:
         return obj
 
