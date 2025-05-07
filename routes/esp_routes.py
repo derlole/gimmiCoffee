@@ -6,7 +6,7 @@ import random
 import sqlite3
 import os
 from modules.persistence import esp_conn_infos
-import datetime
+from datetime import datetime, timedelta
 from modules.socketio import resend_static_data
 
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
@@ -29,7 +29,7 @@ def esp_online():
     esp_conn_infos["last_seen"] = datetime.now()
     esp_conn_infos["connection_valid"] = True
     resend_static_data()
-    
+
     print(f"ESP ONLINE von IP: {esp_ip}, roher IP: {sender_ip}")
     return jsonify({"status": "ok"})
 
