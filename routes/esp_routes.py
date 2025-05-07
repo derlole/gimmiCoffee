@@ -24,7 +24,7 @@ def esp_online():
     sender_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     esp_ip = data.get("ip", "unknown")
 
-    esp_conn_infos["ip_local"] = esp_ip
+    esp_conn_infos["ip_local"] = esp_ip[0]
     esp_conn_infos["ip_global"] = sender_ip
     esp_conn_infos["last_seen"] = datetime.now()
     esp_conn_infos["connection_valid"] = True

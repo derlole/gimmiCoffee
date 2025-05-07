@@ -19,7 +19,7 @@ MQTT_TOPIC_SEND = "coffee/command"
 app = Flask(__name__, static_url_path='/unsecure/static')
 app.config['SECRET_KEY'] = 'super-secret-key'
 
-socketio.init_app(app)
+socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
 
 
 # Blueprints registrieren
