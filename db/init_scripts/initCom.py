@@ -30,4 +30,4 @@ CREATE TABLE IF NOT EXISTS commands (
 conn.commit()
 conn.close()
 
-print(f"Datenbank erstellt unter: {db_path}")
+print(f"[DB]Datenbank erstellt unter: {db_path}")

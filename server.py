@@ -9,11 +9,15 @@ from datetime import datetime, timedelta
 import sqlite3
 from modules.persistence import load_dict, save_dict, esp_conn_infos
 from modules.socketio import socketio, resend_static_data
+from modules.db import update_command_status
+import json
+from modules.other import refactor_and_use_esp_data
 
 MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
 MQTT_TOPIC_SUB = "coffee/status"
 MQTT_TOPIC_SEND = "coffee/command"
+MQTT_TOPIC_RETURN = "coffee/return"
 
 
 app = Flask(__name__, static_url_path='/unsecure/static')
@@ -30,15 +34,29 @@ app.register_blueprint(esp)
 def on_connect(client, userdata, flags, rc):
     print(f"[MQTT] Verbunden mit Code {rc}")
     client.subscribe(MQTT_TOPIC_SUB)
+    client.subscribe(MQTT_TOPIC_RETURN)
+    print(f"[MQTT] Subscribed to topic: {MQTT_TOPIC_RETURN}")
     print(f"[MQTT] Subscribed to topic: {MQTT_TOPIC_SUB}")
 
 def on_message(client, userdata, msg):
-    print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
-    # Optional an Clients senden
-    socketio.emit('mqtt_message', {
-        'topic': msg.topic,
-        'message': msg.payload.decode()
-    })
+    if msg.topic == MQTT_TOPIC_SUB:
+        print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
+        refactor_and_use_esp_data(msg.payload.decode())
+    elif msg.topic == MQTT_TOPIC_RETURN:
+        print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
+        try:
+            payload = json.loads(msg.payload.decode())
+            command_id = payload.get("command_id")
+            if command_id:
+                update_command_status(command_id, "served") # form modules
+            else:
+                print("[MQTT] Keine command_id im Payload gefunden.")
+        except json.JSONDecodeError as e:
+            print(f"[MQTT] Fehler beim Dekodieren der Nachricht: {e}")
+    else:
+        print(f"[MQTT] Unbekanntes Topic: {msg.topic}")
+        return
+    
 
 # MQTT-Thread
 def mqtt_thread():
@@ -108,7 +126,7 @@ def monitor_esp_connection():
 threading.Thread(target=cleanup_old_commands, daemon=True).start()
 threading.Thread(target=monitor_esp_connection, daemon=True).start()
 
-threading.Thread(target=mqtt_thread, daemon=True).start()
+#threading.Thread(target=mqtt_thread, daemon=True).start()
 
 if __name__ == '__main__':
     #clear_commands_db()
