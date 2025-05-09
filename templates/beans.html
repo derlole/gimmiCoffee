@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='gimmiCoffee_Logo.png') }}" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <h1>Bohnenstatus</h1>
+       
+        <div class="status">
+            <p><strong>Zuletzt gefüllt:</strong> {{ last_filled }}</p><!-- refactor the variable names-->
+            <p><strong>Aktueller Füllstand:</strong> {{ current_level }}%</p><!-- refactor the variable names-->
+            <p><strong>Kaffees seit letzter Füllung:</strong> {{ coffees_made }}</p><!-- refactor the variable names-->
+            <p><strong>Gesamtanzahl der Füllungen:</strong> {{ total_refills }}</p><!-- refactor the variable names-->
+        </div>
+    </div>
+     <button class="homeBut" onclick="window.location.href = '/unsecure'">Get Me Home</button>
+</body>
+</html>

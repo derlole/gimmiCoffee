@@ -13,7 +13,7 @@ cursor = conn.cursor()
 
 # Tabelle erstellen mit entsprechenden Atributen
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS commands (
+CREATE TABLE IF NOT EXISTS coffee (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user TEXT NOT NULL,
     status TEXT NOT NULL,

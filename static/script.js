@@ -96,3 +96,39 @@ function toggleMachine() {
             console.log(data);
         });
 }
+
+function waterRefill(){
+    if (gebId("water-fill").parentElement.classList.contains("deniePress")){
+        return;
+    }
+    console.log(water)
+    if (water.fill == 100){
+        alert("Wassertank ist bereits voll!");
+        return;
+    }
+    console.log("waterRefill");
+    fetch('/unsecure/refill-water', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        });
+}
+
+function beansRefill(){
+    if (gebId("beans-fill").parentElement.classList.contains("deniePress")){
+        return;
+    }
+    if (beans.fill == 100){
+        alert("Bohnentank ist bereits voll!");
+        return;
+    }
+    console.log("beansRefill");
+    fetch('/unsecure/refill-beans', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        });
+}
+function showCoffeeHistory(){
+    window.location.href = "/unsecure/coffees-made";
+}

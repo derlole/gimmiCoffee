@@ -52,20 +52,19 @@
                     <div class="top-left-text">Maschine</div>
                     <div class="center-number" id="machine-status">AUS</div>
                 </div>
-                <div class="grid-button deniePress initBackRed" id="machine-ready-butt">
-                    <div class="top-left-text">Maschine</div>
-                    <div class="center-number" id="machiene-ready-text">Nicht Bereit</div>
-                </div>
-
                 <div class="grid-button deniePress" id="machine-error-butt">
                     <div class="top-left-text">Fehler</div>
                     <div class="center-number" id="machiene-error-text">Keiner</div>
                 </div>
-                <div class="grid-button defaultGray">
+                <div class="grid-button deniePress initBackRed" id="machine-ready-butt">
+                    <div class="top-left-text">Maschine</div>
+                    <div class="center-number" id="machiene-ready-text">Nicht Bereit</div>
+                </div>
+                <div class="grid-button defaultGray" onclick="waterRefill()">
                     <div class="top-left-text">Wasser</div>
                     <div class="center-number">Nachgefüllt?</div>
                 </div>
-                <div class="grid-button defaultGray">
+                <div class="grid-button defaultGray" onclick="beansRefill()">
                     <div class="top-left-text">Bohnen</div>
                     <div class="center-number">Nachgefüllt?</div>
                 </div>
@@ -74,15 +73,15 @@
 
         <section class="right stats-box">
             <h2 class="stats-title">Statistiken</h2>
-            <div class="clickable">
+            <div class="clickable" onclick="showCoffeeHistory()">
                 <div class="top-left-text">Coffee made</div>
-                <div class="center-number">XXX</div>
+                <div class="center-number">{{ coffee_count }}</div>
             </div>
-            <div class="clickable">
+            <div class="clickable" onclick=" window.location.href = '/unsecure/beans'">
                 <div class="top-left-text">Bohnen Füllstand</div>
                 <div class="center-number" id="beans-fill">XX%</div>
             </div>
-            <div class="clickable">
+            <div class="clickable" onclick=" window.location.href = '/unsecure/water'">
                 <div class="top-left-text">Wasser Füllstand</div>
                 <div class="center-number" id="water-fill">XX%</div>
             </div>
@@ -102,9 +101,3 @@
     <script src="{{ url_for('static', filename='socketio.js') }}"></script>
 </body>
 </html>
-
-
-
-
-
-

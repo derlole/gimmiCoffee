@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='gimmiCoffee_Logo.png') }}" type="image/png">
+
+</head>
+<body>
+    <h1>Coffee History</h1>
+    <button class="homeBut" onclick="window.location.href = '/unsecure'">get me home</button>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Status</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for coffee in coffees %}
+            <tr>
+                <td>{{ coffee.user }}</td>
+                <td>{{ coffee.status }}</td>
+                <td>{{ coffee.tstamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="{{ url_for('static', filename='coffeesmade.js') }}"></script>
+</body>
+</html>
