@@ -1,14 +1,20 @@
+import network
 from umqtt.simple import MQTTClient
 from machine import Pin
 import json
 import time
+import urequests
 
 # MQTT-Konfiguration
-MQTT_BROKER = "lires.de"  # oder Ihr eigener MQTT Broker
+MQTT_BROKER = "lires.de"  
 MQTT_PORT = 1883
 MQTT_CLIENT_ID = "esp8266_coffee"
 MQTT_TOPIC_STATUS = b"coffee/status"
 MQTT_TOPIC_COMMAND = b"coffee/command"
+MQTT_TOPIC_RETURN = b"coffee/return"
+
+# Other Constants
+SERVER_URL = "http://lires.de/unsecure/esp/online"
 
 # --- Eingänge ---
 an = Pin(5, Pin.IN)
@@ -16,11 +22,13 @@ bereit = Pin(4, Pin.IN)
 fehler = Pin(14, Pin.IN)
 bohnen_voll = Pin(12, Pin.IN)
 Wasser_voll = Pin(13, Pin.IN)
+
 # --- Ausgänge ---
-einschalten = Pin(0, Pin.OUT)
+toggle_machine = Pin(0, Pin.OUT)
 starten = Pin(15, Pin.OUT)
+
 # --- Status ---
-kaffee_machen =0
+kaffee_machen = 0
 vorbereitung = 0
 kaffee_fertig = 0
 
@@ -33,12 +41,17 @@ def mqtt_callback(topic, msg):
     try:
         command = json.loads(msg.decode())
         if topic == MQTT_TOPIC_COMMAND:
-            if 'einschalten' in command:
-                einschalten(command['einschalten'])
-                print(f"Kommando 'einschalten' mit Wert {command['einschalten']} ausgeführt")
-            if 'starten' in command:
-                starten(command['starten'])
-                print(f"Kommando 'starten' mit Wert {command['starten']} ausgeführt")
+            if  command['command']=='toggle_machine':
+                if starten.value() == 0:
+                    command['status']='served'
+                   
+                print(command)
+                client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
+                
+            if  command['command']=='make_coffee':
+               # Kaffe maschine antworten @TODO
+                print(command)
+                client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
     except Exception as e:
         print('Fehler bei Kommando-Verarbeitung:', e)
 
@@ -61,7 +74,7 @@ def send_online_status():
     except Exception as e:
         print("Fehler beim Senden:", e)
 
-        
+
 # MQTT-Verbindung herstellen
 try:
     client = connect_mqtt()
@@ -69,6 +82,7 @@ except Exception as e:
     print('MQTT Verbindungsfehler:', e)
     client = None
 
+send_online_status()
 # Hauptschleife
 while True:
     try:
@@ -83,7 +97,7 @@ while True:
                 "fehler": fehler.value(),
                 "bohnen_voll": bohnen_voll.value(),
                 "Wasser_voll": Wasser_voll.value(),
-                "einschalten": einschalten.value(),
+                "einschalten": toggle_machine.value(),
                 "starten": starten.value(),
 
                 # ---komunikation---
@@ -100,7 +114,7 @@ while True:
             except:
                 pass
                 
-        time.sleep(1)
+        time.sleep(5) # Warte 5 Sekunden zwischen den Status-Updates
         
     except Exception as e:
         print('Fehler in Hauptschleife:', e)
@@ -109,9 +123,9 @@ while True:
     
             # Einschalten der Kaffeemaschine
     if kaffee_machen == 1:
-        einschalten(1)
+        toggle_machine(1)
         time.sleep(1)
-        einschalten(0)
+        toggle_machine(0)
             
             
             # Starten der Kaffeemaschine
