@@ -41,6 +41,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     if msg.topic == MQTT_TOPIC_SUB:
         print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
+        esp_conn_infos["last_seen"] = datetime.now()
         refactor_and_use_esp_data(msg.payload.decode())
     elif msg.topic == MQTT_TOPIC_RETURN:
         print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
@@ -123,7 +124,7 @@ def monitor_esp_connection():
     while True:
         if esp_conn_infos["last_seen"]:
             time_diff = datetime.now() - esp_conn_infos["last_seen"]
-            if time_diff > timedelta(minutes=30):
+            if time_diff > timedelta(minutes=3):
                 esp_conn_infos["connection_valid"] = False
                 resend_static_data()
         time.sleep(60)  # einmal pro Minute die Verbindung zum ESP prüfen

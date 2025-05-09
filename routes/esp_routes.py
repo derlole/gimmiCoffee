@@ -51,3 +51,24 @@ def toggle_machine():
     client.disconnect()
 
     return jsonify({"status": json.dumps(fullCommand)})
+
+@esp.route('/make_coffee', methods=['POST'])
+def make_coffee():
+    randID = random.randint(1000, 9999)
+    fullCommand = {'command': 'make_coffee', 'status': 'pending', 'command_id': randID}
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO commands (command, status, command_id)
+        VALUES (?, ?, ?)
+    """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
+
+    conn.commit()
+    conn.close()
+    client = mqtt.Client()
+    client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    client.publish(MQTT_TOPIC, json.dumps(fullCommand))
+    client.disconnect()
+
+    return jsonify({"status": json.dumps(fullCommand)})
