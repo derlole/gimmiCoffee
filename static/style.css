@@ -226,6 +226,12 @@ background-color: red;
 .initBackRed:Hover{
     background-color: rgb(252, 47, 47);
 }
+.initBackGreen {
+    background-color: green;
+}
+.initBackGreen:hover {
+    background-color: rgb(0, 151, 0);
+}
 .deniePress:hover{
     cursor: not-allowed;
 }
@@ -251,6 +257,10 @@ background-color: red;
 }
 .validButt:hover.deniePress{
     background-color: green !important;
+}
+.initBackGreen:hover.deniePress {
+    background-color: green !important;
+    cursor: not-allowed;
 }
 .deniePress:hover{
     cursor: not-allowed;

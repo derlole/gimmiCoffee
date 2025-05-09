@@ -5,7 +5,7 @@ import os
 import sqlite3
 
 db_folder = "db"
-db_filename = "commands.db"
+db_filename = "coffee.db"
 db_path = os.path.join(db_folder, db_filename)
 
 conn = sqlite3.connect(db_path)
@@ -15,9 +15,8 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS commands (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    command TEXT NOT NULL,
+    user TEXT NOT NULL,
     status TEXT NOT NULL,
-    command_id INTEGER UNIQUE NOT NULL,
     tstamp DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 """)

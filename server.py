@@ -57,7 +57,6 @@ def on_message(client, userdata, msg):
         print(f"[MQTT] Unbekanntes Topic: {msg.topic}")
         return
     
-
 # MQTT-Thread
 def mqtt_thread():
     client = mqtt.Client()
@@ -100,15 +99,22 @@ def clear_commands_db():
     import os
     import sqlite3
 
-    db_path = os.path.join(os.path.dirname(__file__), "db", "commands.db")
+    db_path_command = os.path.join(os.path.dirname(__file__), "db", "commands.db")
+    db_path_coffee = os.path.join(os.path.dirname(__file__), "db", "coffee.db")
 
-    if os.path.exists(db_path):
-        conn = sqlite3.connect(db_path)
+    if os.path.exists(db_path_command):
+        conn = sqlite3.connect(db_path_command)
         cursor = conn.cursor()
         cursor.execute("DELETE FROM commands")
         conn.commit()
         conn.close()
         print("[DB] commands-Tabelle geleert.")
+        conn = sqlite3.connect(db_path_coffee)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM coffee")
+        conn.commit()
+        conn.close()
+        print("[DB] coffee-Tabelle geleert.")
     else:
         print("[DB] Keine Datenbank gefunden – nichts geleert.")
 
