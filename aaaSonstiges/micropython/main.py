@@ -25,14 +25,20 @@ vorbereitung = 0
 kaffee_fertig = 0
 
 def mqtt_callback(topic, msg):
-    print('Empfangen:', topic, msg)
+    print('-------------------------')
+    print('MQTT Nachricht empfangen:')
+    print(f'Topic: {topic.decode()}')
+    print(f'Payload: {msg.decode()}')
+    print('-------------------------')
     try:
         command = json.loads(msg.decode())
         if topic == MQTT_TOPIC_COMMAND:
             if 'einschalten' in command:
                 einschalten(command['einschalten'])
+                print(f"Kommando 'einschalten' mit Wert {command['einschalten']} ausgeführt")
             if 'starten' in command:
                 starten(command['starten'])
+                print(f"Kommando 'starten' mit Wert {command['starten']} ausgeführt")
     except Exception as e:
         print('Fehler bei Kommando-Verarbeitung:', e)
 
@@ -44,6 +50,18 @@ def connect_mqtt():
     client.subscribe(MQTT_TOPIC_COMMAND)
     return client
 
+def send_online_status():
+    try:
+        ip = network.WLAN(network.STA_IF).ifconfig()
+        payload = json.dumps({"ip": ip})
+        headers = {'Content-Type': 'application/json'}
+        response = urequests.post(SERVER_URL, data=payload, headers=headers)
+        print("Antwort vom Server:", response.text)
+        response.close()
+    except Exception as e:
+        print("Fehler beim Senden:", e)
+
+        
 # MQTT-Verbindung herstellen
 try:
     client = connect_mqtt()
