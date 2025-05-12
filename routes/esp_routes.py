@@ -8,6 +8,7 @@ import os
 from modules.persistence import esp_conn_infos
 from datetime import datetime, timedelta
 from modules.socketio import resend_static_data
+from modules.persistence import load_dict, save_dict
 
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
 
@@ -43,6 +44,13 @@ def toggle_machine():
         VALUES (?, ?, ?)
     """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
 
+
+    new_status = load_dict("machine")
+    new_status["state"] = "PENDING"
+    save_dict("machine", new_status)
+
+    resend_static_data()
+    
     conn.commit()
     conn.close()
     client = mqtt.Client()

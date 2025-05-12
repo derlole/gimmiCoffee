@@ -42,14 +42,14 @@ def on_message(client, userdata, msg):
     if msg.topic == MQTT_TOPIC_SUB:
         print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
         esp_conn_infos["last_seen"] = datetime.now()
-        refactor_and_use_esp_data(msg.payload.decode())
+        refactor_and_use_esp_data(msg.payload.decode()) # form modules other
     elif msg.topic == MQTT_TOPIC_RETURN:
         print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
         try:
             payload = json.loads(msg.payload.decode())
             command_id = payload.get("command_id")
             if command_id:
-                update_command_status(command_id, "served") # form modules
+                update_command_status(command_id, "served") # form modules db
             else:
                 print("[MQTT] Keine command_id im Payload gefunden.")
         except json.JSONDecodeError as e:

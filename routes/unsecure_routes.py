@@ -13,7 +13,7 @@ def index():
     beans = load_dict("beans")
     machine = load_dict("machine")
     coffee_count = get_coffee_count()
-    print(f"Water: {water}, Beans: {beans}, Machine: {machine}")
+    # print(f"[DEBUG] Water: {water}, Beans: {beans}, Machine: {machine}")
     return render_template('index.html', title='gimmiCoffee', water=water, beans=beans, machine=machine, esp_conn_infos=esp_conn_infos, coffee_count=coffee_count)
 
 # @unsecure.route('/update')
@@ -51,8 +51,8 @@ def coffees_made():
 @unsecure.route('/water')
 def water():
     water = load_dict("water")
-    return render_template('water.html', title='gimmiCoffee', last_filled=water["lastFilled"], current_level=water["fill"], total_refills=water["refilled"], coffees_made=water["coffeesOnFill"])
+    return render_template('water.html', title='gimmiCoffee', last_filled=datetime.strptime(water["lastFilled"], "%Y-%m-%d %H:%M:%S.%f"), current_level=water["fill"], total_refills=water["refilled"], coffees_made=water["coffeesOnFill"])
 @unsecure.route('/beans')
 def beans():
     beans = load_dict("beans")
-    return render_template('beans.html', title='gimmiCoffee', last_filled=beans["lastFilled"], current_level=beans["fill"], total_refills=beans["refilled"], coffees_made=beans["coffeesOnFill"])
+    return render_template('beans.html', title='gimmiCoffee', last_filled=datetime.strptime(beans["lastFilled"], "%Y-%m-%d %H:%M:%S.%f"), current_level=beans["fill"], total_refills=beans["refilled"], coffees_made=beans["coffeesOnFill"])

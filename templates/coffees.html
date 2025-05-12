@@ -9,8 +9,15 @@
 
 </head>
 <body>
+    <header>
+        <div class="site-title" onclick="window.location.href = '/unsecure'">gimmiCoffee</div>
+        <div class="user-actions">
+            <span class="username">Max Mustermann</span>
+            <a href="/logout" class="logout">Logout</a>
+        </div>
+    </header>
     <h1>Coffee History</h1>
-    <button class="homeBut" onclick="window.location.href = '/unsecure'">get me home</button>
+    <!-- <button class="homeBut" onclick="window.location.href = '/unsecure'">get me home</button> --> <!-- the redirection is available over the gimmiCoffee writing-->
     <table>
         <thead>
             <tr>
@@ -24,11 +31,11 @@
             <tr>
                 <td>{{ coffee.user }}</td>
                 <td>{{ coffee.status }}</td>
-                <td>{{ coffee.tstamp }}</td>
+                <td>{{ coffee.tstamp}}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <script src="{{ url_for('static', filename='coffeesmade.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='coffeesmade.js') }}"></script> -->
 </body>
 </html>

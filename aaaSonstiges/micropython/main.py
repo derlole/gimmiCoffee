@@ -17,11 +17,11 @@ MQTT_TOPIC_RETURN = b"coffee/return"
 SERVER_URL = "http://lires.de/unsecure/esp/online"
 
 # --- Eingänge ---
-an = Pin(5, Pin.IN)
-bereit = Pin(4, Pin.IN)
-fehler = Pin(14, Pin.IN)
-bohnen_voll = Pin(12, Pin.IN)
-Wasser_voll = Pin(13, Pin.IN)
+an = Pin(5, Pin.IN, Pin.PULL_UP)
+bereit = Pin(4, Pin.IN, Pin.PULL_UP)
+fehler = Pin(14, Pin.IN, Pin.PULL_UP)
+bohnen_voll = Pin(12, Pin.IN, Pin.PULL_UP)
+wasser_voll = Pin(13, Pin.IN, Pin.PULL_UP)
 
 # --- Ausgänge ---
 toggle_machine = Pin(0, Pin.OUT)
@@ -96,7 +96,7 @@ while True:
                 "bereit": bereit.value(),
                 "fehler": fehler.value(),
                 "bohnen_voll": bohnen_voll.value(),
-                "Wasser_voll": Wasser_voll.value(),
+                "Wasser_voll": wasser_voll.value(),
                 "einschalten": toggle_machine.value(),
                 "starten": starten.value(),
 
@@ -121,14 +121,14 @@ while True:
         time.sleep(5)
         client = None
     
-            # Einschalten der Kaffeemaschine
+    # Einschalten der Kaffeemaschine
     if kaffee_machen == 1:
         toggle_machine(1)
         time.sleep(1)
         toggle_machine(0)
             
             
-            # Starten der Kaffeemaschine
+    # Starten der Kaffeemaschine
     if kaffee_machen == 1 and an() == 1 and bereit() == 1 and fehler() == 0:
                 starten(1)
                 time.sleep(1)
@@ -137,18 +137,18 @@ while True:
     else:
                 starten(0)
                 gestartet = 0
-            #Vorbereitung der Kaffeemaschine
+    #Vorbereitung der Kaffeemaschine
     if bereit == 0 and an==1 and fehler==0 :
             
                 vorbereitung=1
             
-            # Vorbereitung der Kaffeemaschine
+    # Vorbereitung der Kaffeemaschine
     if bereit() == 0 and an() == 1 and fehler() == 0:
                 vorbereitung = 1
             
             
            
-            # Kaffeemaschine fertig
+    # Kaffeemaschine fertig
     if bereit() == 1 and an() == 1 and fehler() == 0 and gestartet == 1:
                 kaffee_fertig=1
                 gestartet = 0
@@ -164,5 +164,5 @@ while True:
     if bohnen_voll() == 1:
         bohnen_voll(1)
 
-    if Wasser_voll() == 1:
-        Wasser_voll(1)
+    if wasser_voll() == 1:
+        wasser_voll(1)

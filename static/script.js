@@ -53,29 +53,30 @@ if (beans.fill < 20) {
 }
 //all there given if generated html manipulations are not else-ed because the else condition is always in the dafult. 
 //If later information is changed and should manipulate the html, it will come through socketio.js
+stBut = gebId("machine-status-butt")
 switch (machine.state) {
     case "ON":
         gebId("machine-status").innerText = "AN";        
-        gebId("machine-status-butt").classList.remove("blink-orange");
-        gebId("machine-status-butt").classList.remove("initBackRed");
-        gebId("machine-status-butt").classList.add("initBackGreen");
+        stBut.classList.remove("blink-orange");
+        stBut.classList.remove("initBackRed");
+        stBut.classList.add("initBackGreen");
         break;
     case "PENDING":
         gebId("machine-status").innerText = "WARTEN";
-        gebId("machine-status-butt").classList.add("blink-orange");
-        gebId("machine-status-butt").classList.remove("initBackRed");
-        gebId("machine-status-butt").classList.remove("initBackGreen");
+        stBut.classList.add("blink-orange");
+        stBut.classList.remove("initBackRed");
+        stBut.classList.remove("initBackGreen");
         break;
     case "OFF":
         gebId("machine-status").innerText = "AUS";        
-        gebId("machine-status-butt").classList.remove("blink-orange");
-        gebId("machine-status-butt").classList.add("initBackRed");
-        gebId("machine-status-butt").classList.remove("initBackGreen");
+        stBut.classList.remove("blink-orange");
+        stBut.classList.add("initBackRed");
+        stBut.classList.remove("initBackGreen");
         break;
 
     default:
         gebId("machine-status").innerText = "UNBEKANNT";
-        gebId("machine-status-butt").classList.add("initBackRed");
+        stBut.classList.add("initBackRed");
 }
 // All there
 function toggleMachine() {
@@ -87,9 +88,7 @@ function toggleMachine() {
     if (!result) {
         return;
     }
-    console.log("toggleMachine");
-    document.getElementById("machine-status").innerText = "PENDING";
-    document.getElementById("machine-status-butt").classList.add("blink-orange");
+    // console.log("toggleMachine");
     fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
         .then(res => res.json())
         .then(data => {

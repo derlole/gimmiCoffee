@@ -8,16 +8,23 @@
     <link rel="icon" href="{{ url_for('static', filename='gimmiCoffee_Logo.png') }}" type="image/png">
 </head>
 <body>
+    <header>
+        <div class="site-title" onclick="window.location.href = '/unsecure'">gimmiCoffee</div>
+        <div class="user-actions">
+            <span class="username">Max Mustermann</span>
+            <a href="/logout" class="logout">Logout</a>
+        </div>
+    </header>
     <div class="container">
         <h1>Bohnenstatus</h1>
        
         <div class="status">
-            <p><strong>Zuletzt gefüllt:</strong> {{ last_filled }}</p><!-- refactor the variable names-->
-            <p><strong>Aktueller Füllstand:</strong> {{ current_level }}%</p><!-- refactor the variable names-->
-            <p><strong>Kaffees seit letzter Füllung:</strong> {{ coffees_made }}</p><!-- refactor the variable names-->
-            <p><strong>Gesamtanzahl der Füllungen:</strong> {{ total_refills }}</p><!-- refactor the variable names-->
+            <p><strong>Zuletzt gefüllt:</strong> {{ last_filled.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+            <p><strong>Aktueller Füllstand:</strong> {{ current_level }}%</p>
+            <p><strong>Kaffees seit letzter Füllung:</strong> {{ coffees_made }}</p>
+            <p><strong>Gesamtanzahl der Füllungen:</strong> {{ total_refills }}</p>
         </div>
     </div>
-     <button class="homeBut" onclick="window.location.href = '/unsecure'">Get Me Home</button>
+     <!-- <button class="homeBut" onclick="window.location.href = '/unsecure'">Get Me Home</button> -->
 </body>
 </html>
