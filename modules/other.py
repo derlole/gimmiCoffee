@@ -20,6 +20,7 @@
 
 from modules.persistence import load_dict, save_dict
 from modules.socketio import resend_static_data
+from modules.db import create_coffee_entry
 import os
 import sqlite3
 
@@ -30,15 +31,18 @@ def track_coffee_made(data, flanksUp, flanksDown):
     #logic for tracking coffee made
 
     if coffee_made:
-        conn = sqlite3.connect(DB_PATH_COFFEE)
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO coffee (user, status)
-            VALUES (?, ?)
-        """, ("admin", "served"))
-        conn.commit()
-        conn.close()
+        create_coffee_entry()
+        #change to insert coffee at modules.db
+        # conn = sqlite3.connect(DB_PATH_COFFEE)
+        # cursor = conn.cursor()
+        # cursor.execute("""
+        #     INSERT INTO coffee (user, status)
+        #     VALUES (?, ?)
+        # """, ("admin", "served"))
+        # conn.commit()
+        # conn.close()
         print("Coffee made detected, data saved.")
+        # update water fill and beans fill and coffeeOn water and beans
     return 
 
 def track_error_water(data, flanksUp, flanksDown):

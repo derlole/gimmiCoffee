@@ -1,5 +1,5 @@
 {
-  "state": "OFF",
+  "state": "PENDING",
   "connected": false,
   "ready": false,
   "peding_command": false,

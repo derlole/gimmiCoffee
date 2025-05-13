@@ -9,6 +9,7 @@ from modules.persistence import esp_conn_infos
 from datetime import datetime, timedelta
 from modules.socketio import resend_static_data
 from modules.persistence import load_dict, save_dict
+from modules.db import create_toggle_machine, create_make_coffee
 
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
 
@@ -34,25 +35,27 @@ def esp_online():
 
 @esp.route('/toggle-machine', methods=['POST'])
 def toggle_machine():
-    randID = random.randint(1000, 9999)
-    fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    fullCommand = create_toggle_machine()
+    # randID = random.randint(1000, 9999)
+    # fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}
+    # conn = sqlite3.connect(DB_PATH)
+    # cursor = conn.cursor()
 
-    cursor.execute("""
-        INSERT INTO commands (command, status, command_id)
-        VALUES (?, ?, ?)
-    """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
+    # cursor.execute("""
+    #     INSERT INTO commands (command, status, command_id)
+    #     VALUES (?, ?, ?)
+    # """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
 
 
     new_status = load_dict("machine")
     new_status["state"] = "PENDING"
     save_dict("machine", new_status)
 
-    resend_static_data()
+    # resend_static_data()
     
-    conn.commit()
-    conn.close()
+    # conn.commit()
+    # conn.close()
+    
     client = mqtt.Client()
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.publish(MQTT_TOPIC, json.dumps(fullCommand))
@@ -62,18 +65,19 @@ def toggle_machine():
 
 @esp.route('/make_coffee', methods=['POST'])
 def make_coffee():
-    randID = random.randint(1000, 9999)
-    fullCommand = {'command': 'make_coffee', 'status': 'pending', 'command_id': randID}
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+    fullCommand = create_make_coffee()
+    # randID = random.randint(1000, 9999)
+    # fullCommand = {'command': 'make_coffee', 'status': 'pending', 'command_id': randID}
+    # conn = sqlite3.connect(DB_PATH)
+    # cursor = conn.cursor()
 
-    cursor.execute("""
-        INSERT INTO commands (command, status, command_id)
-        VALUES (?, ?, ?)
-    """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
+    # cursor.execute("""
+    #     INSERT INTO commands (command, status, command_id)
+    #     VALUES (?, ?, ?)
+    # """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
 
-    conn.commit()
-    conn.close()
+    # conn.commit()
+    # conn.close()
     client = mqtt.Client()
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.publish(MQTT_TOPIC, json.dumps(fullCommand))

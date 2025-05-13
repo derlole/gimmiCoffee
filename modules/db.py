@@ -1,11 +1,13 @@
 import sqlite3
 import os
 from datetime import datetime, timedelta
+from modules.socketio import resend_static_data
+import random
 
 DB_PATH = os.path.join(os.path.dirname(__file__), '../db/commands.db')
 DB_PATH_COFFEE = os.path.join(os.path.dirname(__file__), '../db/coffee.db') 
 
-### THIS CODE IS NOT PROOFED BUT LOOKS RIGHT###
+
 def update_command_status(command_id, status):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -20,7 +22,6 @@ def update_command_status(command_id, status):
     conn.close()
     print(f"[DB] Befehl {command_id} auf {status} aktualisiert.")
     return status
-### THIS CODE IS NOT PROOFED BUT LOOKS RIGHT###
 
 def get_coffee_count():
     conn = sqlite3.connect(DB_PATH_COFFEE)
@@ -41,3 +42,44 @@ def get_coffees():
     
     conn.close()
     return coffees
+def create_toggle_machine():
+    randID = random.randint(1000, 9999)
+    fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO commands (command, status, command_id)
+        VALUES (?, ?, ?)
+    """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
+
+    resend_static_data()
+    
+    conn.commit()
+    conn.close()
+    return fullCommand
+
+def create_make_coffee():
+    randID = random.randint(1000, 9999)
+    fullCommand = {'command': 'make_coffee', 'status': 'pending', 'command_id': randID}
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO commands (command, status, command_id)
+        VALUES (?, ?, ?)
+    """, (fullCommand["command"], fullCommand["status"], fullCommand["command_id"]))
+
+    conn.commit()
+    conn.close()
+    return fullCommand
+
+def create_coffee_entry():
+    conn = sqlite3.connect(DB_PATH_COFFEE)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO coffee (user, status)
+        VALUES (?, ?)
+    """, ("admin", "served"))
+    conn.commit()
+    conn.close()
