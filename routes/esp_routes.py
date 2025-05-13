@@ -13,7 +13,7 @@ from modules.db import create_toggle_machine, create_make_coffee
 
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
 
-DB_PATH = os.path.join(os.path.dirname(__file__), '../db/commands.db')
+# DB_PATH = os.path.join(os.path.dirname(__file__), '../db/commands.db')
 
 MQTT_BROKER = "localhost"  # oder IP/Domain
 MQTT_PORT = 1883

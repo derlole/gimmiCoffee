@@ -24,7 +24,7 @@ from modules.db import create_coffee_entry
 import os
 import sqlite3
 
-DB_PATH_COFFEE = os.path.join(os.path.dirname(__file__), '../db/coffee.db')
+# DB_PATH_COFFEE = os.path.join(os.path.dirname(__file__), '../db/coffee.db')
 
 def track_coffee_made(data, flanksUp, flanksDown):
     coffee_made = False
