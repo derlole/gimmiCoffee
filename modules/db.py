@@ -1,6 +1,5 @@
 import sqlite3
 import os
-from datetime import datetime, timedelta
 from modules.socketio import resend_static_data
 import random
 
@@ -42,6 +41,7 @@ def get_coffees():
     
     conn.close()
     return coffees
+
 def create_toggle_machine():
     randID = random.randint(1000, 9999)
     fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}

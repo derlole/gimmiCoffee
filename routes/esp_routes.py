@@ -1,19 +1,18 @@
-from flask import Blueprint, render_template, request, jsonify
-from flask import Flask, jsonify, request
+from flask import Blueprint, request, jsonify
 import paho.mqtt.client as mqtt
 import json
 import random
 import sqlite3
 import os
 from modules.persistence import esp_conn_infos
-from datetime import datetime, timedelta
+from datetime import datetime
 from modules.socketio import resend_static_data
 from modules.persistence import load_dict, save_dict
 from modules.db import create_toggle_machine, create_make_coffee
 
 esp = Blueprint('eps', __name__, url_prefix='/unsecure/esp')
 
-MQTT_BROKER = "localhost"  # oder IP/Domain
+MQTT_BROKER = "localhost"  
 MQTT_PORT = 1883
 MQTT_TOPIC = "coffee/command"
 

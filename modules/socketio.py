@@ -1,4 +1,4 @@
-# extensions.py
+
 from flask_socketio import SocketIO
 from modules.persistence import esp_conn_infos,load_dict, save_dict
 from datetime import datetime

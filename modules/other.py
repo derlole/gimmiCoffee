@@ -7,11 +7,11 @@
 #   "fehler":               [1/0],
 #   "bohnen_voll":          [1/0],
 #   "Wasser_voll":          [1/0],
-#
+
 #   # ausgänge
 #   "einschalten":          [0/1],
 #   "starten":              [0/1],
-#   
+  
 #   # status
 #   "kaffee_machen":        [0/1],
 #   "vorbereitung":         [0/1],
@@ -21,10 +21,6 @@
 from modules.persistence import load_dict, save_dict
 from modules.socketio import resend_static_data
 from modules.db import create_coffee_entry
-import os
-import sqlite3
-
-# DB_PATH_COFFEE = os.path.join(os.path.dirname(__file__), '../db/coffee.db')
 
 def track_coffee_made(data, flanksUp, flanksDown):
     coffee_made = False
@@ -32,15 +28,7 @@ def track_coffee_made(data, flanksUp, flanksDown):
 
     if coffee_made:
         create_coffee_entry()
-        #change to insert coffee at modules.db
-        # conn = sqlite3.connect(DB_PATH_COFFEE)
-        # cursor = conn.cursor()
-        # cursor.execute("""
-        #     INSERT INTO coffee (user, status)
-        #     VALUES (?, ?)
-        # """, ("admin", "served"))
-        # conn.commit()
-        # conn.close()
+
         print("Coffee made detected, data saved.")
         # update water fill and beans fill and coffeeOn water and beans
     return 
