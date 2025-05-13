@@ -80,22 +80,29 @@ switch (machine.state) {
 }
 // All there
 function toggleMachine() {
-    // if (gebId("machine-status-butt").classList.contains("deniePress")){
-    //     return;
-    // }
-    // // console.log("toggleMachine");
-    // const result = confirm("Möchtest du den Vorgang wirklich ausführen?");
-    // if (!result) {
-    //     return;
-    // }
+    if (gebId("machine-status-butt").classList.contains("deniePress")){
+        return;
+    }
     // console.log("toggleMachine");
+    const result = confirm("Möchtest du den Vorgang wirklich ausführen?");
+    if (!result) {
+        return;
+    }
+    console.log("toggleMachine");
     fetch('/unsecure/esp/toggle-machine', { method: 'POST' })
         .then(res => res.json())
         .then(data => {
             console.log(data);
         });
 }
-
+function makeCoffee(){
+    console.log("makeCoffee")
+    fetch('/unsecure/esp/make_coffee', {method: 'POST'})
+        .then(res => res.json())
+        .then(data =>{
+            console.log(data)
+        })
+}
 function waterRefill(){
     if (gebId("water-fill").parentElement.classList.contains("deniePress")){
         return;
