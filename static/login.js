@@ -6,10 +6,29 @@ document.getElementById('login-btn').addEventListener('click', function () {
         alert("Bitte Benutzername und Passwort eingeben.");
         return;
     }
+    fetch(`/unsecure/verify?username=${username}&pass=${password}`, { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+        //console.log(data)
+        window.location.href = data.route
 
-    // Beispiel: Zufällige User-ID generieren (normalerweise kommt das vom Server)
-    const userid = Math.floor(Math.random() * 100000);
-
-    // Weiterleitung zur Startseite mit Parametern
-    window.location.href = `/unsecure/?username=${encodeURIComponent(username)}&userid=${userid}`;
+    });
 });
+document.getElementById('create-btn').addEventListener('click', function () {
+    const username = document.getElementById('usrnm').value.trim();
+    const password = document.getElementById('pw').value;
+    if (!username || !password) {
+        alert("Bitte Benutzername und Passwort eingeben.");
+        return;
+    }
+
+    const result = confirm(`Möchtest du einen Nutzer mit ${username} erstellen?`);
+    if (!result) {
+        return;
+    }
+    fetch(`/unsecure/register?username=${username}&pass=${password}`, { method: 'POST' })
+    .then(res => res.json)
+    .then(data => {
+        console.log(data)
+    })
+})

@@ -13,8 +13,8 @@
     <header>
         <div class="site-title">gimmiCoffee</div>
         <div class="user-actions">
-            <span class="username">Max Mustermann</span>
-            <a href="/logout" class="logout">Logout</a>
+            <span class="username">{{ username }}</span>
+            <a onclick="logout()" class="logout">Logout</a>
         </div>
     </header>
     <div id="waterData" style="display: none;">{{ water | tojson }}</div>

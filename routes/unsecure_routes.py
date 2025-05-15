@@ -5,6 +5,8 @@ from modules.persistence import esp_conn_infos
 from datetime import datetime
 from modules.socketio import resend_static_data
 from modules.db import get_coffee_count, get_coffees
+from obj import user
+import random
 
 
 @unsecure.route('/')
@@ -15,17 +17,47 @@ def index():
     if not username or not userid:
         return redirect('/unsecure/login')
 
+    valid_user = user.User.validate_user(username=username, userid=userid)
+    print(valid_user)
+    if not valid_user:
+        return redirect('/unsecure/login')
+    
+
     water = load_dict("water")
     beans = load_dict("beans")
     machine = load_dict("machine")
     coffee_count = get_coffee_count()
     # print(f"[DEBUG] Water: {water}, Beans: {beans}, Machine: {machine}")
-    return render_template('index.html', title='gimmiCoffee', water=water, beans=beans, machine=machine, esp_conn_infos=esp_conn_infos, coffee_count=coffee_count)
+    return render_template('index.html', title='gimmiCoffee', water=water, beans=beans, machine=machine, esp_conn_infos=esp_conn_infos, coffee_count=coffee_count, username = username)
 
-# @unsecure.route('/update')
-# def update():
-#     resend_static_data()
-#     return jsonify({"status": "ok", "task": "update-executed"})
+@unsecure.route('/verify', methods=['POST'])
+def verify():
+    username = request.args.get('username')
+    password = request.args.get('pass')
+
+    if not username or not password:
+        return jsonify({'route': '/unsecure/login'}), 400
+
+    is_existent = user.User.authenticate_user(username, password)
+    if is_existent:
+        # Erfolgreich eingeloggt → weiterleiten
+        return jsonify({'route': f"/unsecure/?username={is_existent.get_name()}&userid={is_existent.get_id()}"})
+    else:
+        # Fehler → zurück zur Login-Seite
+        return jsonify({'route': '/unsecure/login', 'error': 'Invalid credentials'}), 401
+
+@unsecure.route('/register', methods=['POST'])
+def register():
+    username = request.args.get('username')
+    password = request.args.get('pass')
+    userid = random.randint(10000, 99999)
+    print(username, password, userid)
+    if not username or not password:
+        return jsonify({'err': 'invalidData'}), 400
+    
+    new_user = user.User(user_id=userid, name=username, email = "", password=password)
+    new_user.save_to_db()
+    return redirect('/unsecure/login')
 
 @unsecure.route('/login')
 def login():

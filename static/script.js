@@ -138,3 +138,6 @@ function beansRefill(){
 function showCoffeeHistory(){
     window.location.href = "/unsecure/coffees-made";
 }
+function logout(){
+    window.location.href = "/unsecure/login"
+}

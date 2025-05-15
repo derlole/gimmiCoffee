@@ -8,7 +8,6 @@ class User:
         self._email = email
         self._password = password
         self._db_path = os.path.join("db", "user.db")
-        #self._init_db()
 
     # Getter
     def get_id(self):
@@ -36,36 +35,6 @@ class User:
         self._password = password
         self._update_db()
 
-    def _init_db(self):
-        """Create the database and table if it doesn't exist"""
-        with sqlite3.connect(self._db_path) as conn:
-            c = conn.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    password TEXT NOT NULL
-                )
-            ''')
-            conn.commit()
-            #self._save_to_db()
-
-    def _save_to_db(self):
-        """Insert or update the user in the DB"""
-        with sqlite3.connect(self._db_path) as conn:
-            c = conn.cursor()
-            c.execute("SELECT id FROM users WHERE id = ?", (self._user_id,))
-            if c.fetchone():
-                # update
-                c.execute('UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?',
-                          (self._name, self._email, self._password, self._user_id))
-            else:
-                # insert
-                c.execute('INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)',
-                          (self._user_id, self._name, self._email, self._password))
-            conn.commit()
-
     def _update_db(self):
         """Update the user's data in the DB"""
         with sqlite3.connect(self._db_path) as conn:
@@ -91,15 +60,28 @@ class User:
 
 
     @staticmethod
-    def authenticate_user(email, password):
+    def authenticate_user(username, password):
         """Prüft, ob ein Benutzer mit E-Mail + Passwort existiert"""
         db_path = os.path.join("db", "user.db")
         with sqlite3.connect(db_path) as conn:
             c = conn.cursor()
-            c.execute("SELECT id, name, email FROM users WHERE email = ? AND password = ?", (email, password))
+            c.execute("SELECT id, name, email FROM users WHERE name = ? AND password = ?", (username, password))
             result = c.fetchone()
             if result:
                 user_id, name, email = result
                 return User(user_id, name, email, password)
+            return None
+        
+    @staticmethod
+    def validate_user(username, userid):
+        """Prüft, ob ein Benutzer mit E-Mail + Passwort existiert"""
+        db_path = os.path.join("db", "user.db")
+        with sqlite3.connect(db_path) as conn:
+            c = conn.cursor()
+            c.execute("SELECT id, name, email FROM users WHERE name = ? AND id = ?", (username, userid))
+            result = c.fetchone()
+            if result:
+                user_id, name, email= result
+                return True
             return None
 
