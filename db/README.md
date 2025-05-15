@@ -34,3 +34,7 @@
 
 ## NOTE
 ### A Coffee making process is going through a command creation in the backend, therefore a coffee status can be rejected by the esp or fail after 5 minutes. If the according command fails the coffee fails.
+
+# user db 
+
+## Contains the atributes for each user-Object and is managed by clas User in user.py in obj
