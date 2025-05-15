@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, redirect
 unsecure = Blueprint('unsecure', __name__, url_prefix='/unsecure')
 from modules.persistence import load_dict, save_dict
 from modules.persistence import esp_conn_infos
@@ -9,6 +9,12 @@ from modules.db import get_coffee_count, get_coffees
 
 @unsecure.route('/')
 def index():
+    username = request.args.get('username')
+    userid = request.args.get('userid')
+
+    if not username or not userid:
+        return redirect('/unsecure/login')
+
     water = load_dict("water")
     beans = load_dict("beans")
     machine = load_dict("machine")
@@ -20,6 +26,10 @@ def index():
 # def update():
 #     resend_static_data()
 #     return jsonify({"status": "ok", "task": "update-executed"})
+
+@unsecure.route('/login')
+def login():
+    return render_template('login.html')
 
 @unsecure.route('/refill-water', methods=['POST'])
 def update_water():

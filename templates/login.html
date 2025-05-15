@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='gimmiCoffee_Logo.png') }}" type="image/png">
+</head>
+    <style>
+
+    </style>
+<body>
+    <div class="form-container">
+        <div class="title">gimmiCoffee</div>
+        <input type="text" placeholder="Username" id="usrnm">
+        <input type="password" placeholder="Passwort" id="pw">
+        <button id="login-btn">Login</button>
+        <button>Erstelle Nutzer</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='login.js') }}"></script>
+</body>
+
+</html>
