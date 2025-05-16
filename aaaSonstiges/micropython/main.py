@@ -5,164 +5,139 @@ import json
 import time
 import urequests
 
-# MQTT-Konfiguration
-MQTT_BROKER = "lires.de"  
-MQTT_PORT = 1883
-MQTT_CLIENT_ID = "esp8266_coffee"
-MQTT_TOPIC_STATUS = b"coffee/status"
-MQTT_TOPIC_COMMAND = b"coffee/command"
-MQTT_TOPIC_RETURN = b"coffee/return"
+class CoffeeMachine:
+    def __init__(self):
+        # --- Eingänge ---
+        self.an = Pin(5, Pin.IN, Pin.PULL_UP)
+        self.bereit = Pin(4, Pin.IN, Pin.PULL_UP)
+        self.fehler = Pin(14, Pin.IN, Pin.PULL_UP)
+        self.bohnen_voll = Pin(12, Pin.IN, Pin.PULL_UP)
+        self.wasser_voll = Pin(13, Pin.IN, Pin.PULL_UP)
 
-# Other Constants
-SERVER_URL = "http://lires.de/unsecure/esp/online"
+        # --- Ausgänge ---
+        self.toggle_machine = Pin(0, Pin.OUT)
+        self.starten = Pin(15, Pin.OUT)
 
-# --- Eingänge ---
-an = Pin(5, Pin.IN, Pin.PULL_UP)
-bereit = Pin(4, Pin.IN, Pin.PULL_UP)
-fehler = Pin(14, Pin.IN, Pin.PULL_UP)
-bohnen_voll = Pin(12, Pin.IN, Pin.PULL_UP)
-wasser_voll = Pin(13, Pin.IN, Pin.PULL_UP)
+        # --- Status ---
+        self.kaffee_machen = 0
+        self.vorbereitung = 0
+        self.kaffee_fertig = 0
+        self.gestartet = 0
 
-# --- Ausgänge ---
-toggle_machine = Pin(0, Pin.OUT)
-starten = Pin(15, Pin.OUT)
+    def get_status(self):
+        return {
+            "an": self.an.value(),
+            "bereit": self.bereit.value(),
+            "fehler": self.fehler.value(),
+            "bohnen_voll": self.bohnen_voll.value(),
+            "wasser_voll": self.wasser_voll.value(),
+            "einschalten": self.toggle_machine.value(),
+            "starten": self.starten.value(),
+            "kaffee_machen": self.kaffee_machen,
+            "vorbereitung": self.vorbereitung,
+            "kaffee_fertig": self.kaffee_fertig
+        }
 
-# --- Status ---
-kaffee_machen = 0
-vorbereitung = 0
-kaffee_fertig = 0
+    def make_coffee(self):
+        if self.kaffee_machen == 1:
+            self.toggle_machine.value(1)
+            time.sleep(1)
+            self.toggle_machine.value(0)
 
-def mqtt_callback(topic, msg):
-    print('-------------------------')
-    print('MQTT Nachricht empfangen:')
-    print(f'Topic: {topic.decode()}')
-    print(f'Payload: {msg.decode()}')
-    print('-------------------------')
-    try:
-        command = json.loads(msg.decode())
-        if topic == MQTT_TOPIC_COMMAND:
-            if  command['command']=='toggle_machine':
-                if starten.value() == 0:
-                    command['status']='served'
-                   
-                print(command)
-                client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
-                
-            if  command['command']=='make_coffee':
-               # Kaffe maschine antworten @TODO
-                print(command)
-                client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
-    except Exception as e:
-        print('Fehler bei Kommando-Verarbeitung:', e)
+        if (self.kaffee_machen == 1 and 
+            self.an.value() == 1 and 
+            self.bereit.value() == 1 and 
+            self.fehler.value() == 0):
+            self.starten.value(1)
+            time.sleep(1)
+            self.starten.value(0)
+            self.gestartet = 1
+        else:
+            self.starten.value(0)
+            self.gestartet = 0
 
-def connect_mqtt():
-    client = MQTTClient(MQTT_CLIENT_ID, MQTT_BROKER, port=MQTT_PORT)
-    client.set_callback(mqtt_callback)
-    client.connect()
-    print('MQTT verbunden')
-    client.subscribe(MQTT_TOPIC_COMMAND)
-    return client
+    def update_status(self):
+        if self.bereit.value() == 0 and self.an.value() == 1 and self.fehler.value() == 0:
+            self.vorbereitung = 1
 
-def send_online_status():
-    try:
-        ip = network.WLAN(network.STA_IF).ifconfig()
-        payload = json.dumps({"ip": ip})
-        headers = {'Content-Type': 'application/json'}
-        response = urequests.post(SERVER_URL, data=payload, headers=headers)
-        print("Antwort vom Server:", response.text)
-        response.close()
-    except Exception as e:
-        print("Fehler beim Senden:", e)
+        if (self.bereit.value() == 1 and 
+            self.an.value() == 1 and 
+            self.fehler.value() == 0 and 
+            self.gestartet == 1):
+            self.kaffee_fertig = 1
+            self.gestartet = 0
+        else:
+            self.kaffee_fertig = 0
 
+class MQTTHandler:
+    BROKER = "lires.de"
+    PORT = 1883
+    CLIENT_ID = "esp8266_coffee"
+    TOPIC_STATUS = b"coffee/status"
+    TOPIC_COMMAND = b"coffee/command"
+    TOPIC_RETURN = b"coffee/return"
+    
+    def __init__(self, coffee_machine):
+        self.coffee_machine = coffee_machine
+        self.client = None
+
+    def connect(self):
+        self.client = MQTTClient(self.CLIENT_ID, self.BROKER, port=self.PORT)
+        self.client.set_callback(self._callback)
+        self.client.connect()
+        print('MQTT verbunden')
+        self.client.subscribe(self.TOPIC_COMMAND)
+
+    def _callback(self, topic, msg):
+        print('-------------------------')
+        print('MQTT Nachricht empfangen:')
+        print(f'Topic: {topic.decode()}')
+        print(f'Payload: {msg.decode()}')
+        print('-------------------------')
+        try:
+            command = json.loads(msg.decode())
+            if topic == self.TOPIC_COMMAND:
+                self._handle_command(command)
+        except Exception as e:
+            print('Fehler bei Kommando-Verarbeitung:', e)
+
+    def _handle_command(self, command):
+        if command.get('command') == 'toggle_machine':
+            if self.coffee_machine.starten.value() == 0:
+                command['status'] = 'served'
+            self.client.publish(self.TOPIC_RETURN, json.dumps(command))
+        
+        elif command.get('command') == 'make_coffee':
+            self.coffee_machine.kaffee_machen = 1
+            self.client.publish(self.TOPIC_RETURN, json.dumps(command))
+
+    def publish_status(self):
+        if self.client:
+            status = self.coffee_machine.get_status()
+            self.client.publish(self.TOPIC_STATUS, json.dumps(status))
+
+    def check_messages(self):
+        if self.client:
+            self.client.check_msg()
+
+# Objekte erstellen
+coffee_machine = CoffeeMachine()
+mqtt_handler = MQTTHandler(coffee_machine)
 
 # MQTT-Verbindung herstellen
 try:
-    client = connect_mqtt()
+    mqtt_handler.connect()
 except Exception as e:
     print('MQTT Verbindungsfehler:', e)
-    client = None
 
-send_online_status()
 # Hauptschleife
 while True:
     try:
-        if client:
-            client.check_msg()  # Prüfe auf neue MQTT-Nachrichten
-            
-            # Status senden
-            status = {
-                # ---IOs---
-                "an": an.value(),
-                "bereit": bereit.value(),
-                "fehler": fehler.value(),
-                "bohnen_voll": bohnen_voll.value(),
-                "Wasser_voll": wasser_voll.value(),
-                "einschalten": toggle_machine.value(),
-                "starten": starten.value(),
-
-                # ---komunikation---
-                "kaffee_machen": kaffee_machen,
-                "vorbereitung": vorbereitung,
-                "kaffee_fertig": kaffee_fertig,
-                
-            }
-            client.publish(MQTT_TOPIC_STATUS, json.dumps(status))
-        else:
-            # Versuche Neuverbindung
-            try:
-                client = connect_mqtt()
-            except:
-                pass
-                
-        time.sleep(5) # Warte 5 Sekunden zwischen den Status-Updates
-        
+        mqtt_handler.check_messages()
+        mqtt_handler.publish_status()
+        coffee_machine.make_coffee()
+        coffee_machine.update_status()
+        time.sleep(5)
     except Exception as e:
         print('Fehler in Hauptschleife:', e)
         time.sleep(5)
-        client = None
-    
-    # Einschalten der Kaffeemaschine
-    if kaffee_machen == 1:
-        toggle_machine(1)
-        time.sleep(1)
-        toggle_machine(0)
-            
-            
-    # Starten der Kaffeemaschine
-    if kaffee_machen == 1 and an() == 1 and bereit() == 1 and fehler() == 0:
-                starten(1)
-                time.sleep(1)
-                starten(0)
-                gestartet = 1
-    else:
-                starten(0)
-                gestartet = 0
-    #Vorbereitung der Kaffeemaschine
-    if bereit == 0 and an==1 and fehler==0 :
-            
-                vorbereitung=1
-            
-    # Vorbereitung der Kaffeemaschine
-    if bereit() == 0 and an() == 1 and fehler() == 0:
-                vorbereitung = 1
-            
-            
-           
-    # Kaffeemaschine fertig
-    if bereit() == 1 and an() == 1 and fehler() == 0 and gestartet == 1:
-                kaffee_fertig=1
-                gestartet = 0
-    else:
-               kaffee_fertig=0            
-    
-    # Fehlerbehandlung
-    if fehler() == 1:
-        fehler(1)
-    else:
-        fehler(0)
-
-    if bohnen_voll() == 1:
-        bohnen_voll(1)
-
-    if wasser_voll() == 1:
-        wasser_voll(1)
