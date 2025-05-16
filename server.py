@@ -133,7 +133,7 @@ def monitor_esp_connection():
 threading.Thread(target=cleanup_old_commands, daemon=True).start()
 threading.Thread(target=monitor_esp_connection, daemon=True).start()
 
-#threading.Thread(target=mqtt_thread, daemon=True).start()
+threading.Thread(target=mqtt_thread, daemon=True).start()
 
 if __name__ == '__main__':
     #clear_commands_db()
