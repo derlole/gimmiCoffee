@@ -24,13 +24,18 @@ bohnen_voll = Pin(12, Pin.IN)
 Wasser_voll = Pin(13, Pin.IN)
 
 # --- Ausgänge ---
-toggle_machine = Pin(0, Pin.OUT)
+einschalten = Pin(0, Pin.OUT)
 starten = Pin(15, Pin.OUT)
 
 # --- Status ---
-kaffee_machen = 0
-vorbereitung = 0
+toggle_machine=0
+gestartet = 0
+
+make_coffee= 0
+
 kaffee_fertig = 0
+in_process = 0
+
 
 def mqtt_callback(topic, msg):
     print('-------------------------')
@@ -42,14 +47,16 @@ def mqtt_callback(topic, msg):
         command = json.loads(msg.decode())
         if topic == MQTT_TOPIC_COMMAND:
             if  command['command']=='toggle_machine':
-                if starten.value() == 0:
+                toggle_machine=1
+                if gestartet.value() == 1:
                     command['status']='served'
                    
                 print(command)
                 client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
                 
             if  command['command']=='make_coffee':
-               # Kaffe maschine antworten @TODO
+                kaffee_machen=1
+               
                if kaffee_fertig==1:
                     print(command)
                     client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
@@ -85,6 +92,8 @@ except Exception as e:
     client = None
 
 send_online_status()
+
+
 # Hauptschleife
 while True:
     try:
@@ -99,7 +108,7 @@ while True:
                 "fehler": fehler.value(), 
                 "bohnen_voll": bohnen_voll.value(),
                 "Wasser_voll": Wasser_voll.value(),
-                "einschalten": toggle_machine.value(),
+                "einschalten": einschalten.value(),
                 "starten": starten.value(),
 
                 # ---komunikation---
@@ -116,46 +125,34 @@ while True:
             except:
                 pass
                 
-        time.sleep(5) # Warte 5 Sekunden zwischen den Status-Updates
+        time.sleep(3) # Warte 5 Sekunden zwischen den Status-Updates
         
     except Exception as e:
         print('Fehler in Hauptschleife:', e)
         time.sleep(5)
         client = None
-    
-            # Einschalten der Kaffeemaschine
-    if kaffee_machen == 1:
-        toggle_machine(1)
+        # Einschalten der Kaffeemaschine per remote
+    if toggle_machine.value() == 1 and an.value() == 0 and bereit.value() == 0 and fehler.value() == 0:
+        einschalten=1
         time.sleep(1)
-        toggle_machine(0)
-            
-            
-            # Starten der Kaffeemaschine
-    if kaffee_machen == 1 and an() == 1 and bereit() == 1 and fehler() == 0:
-                starten(1)
-                time.sleep(1)
-                starten(0)
-                gestartet = 1
-    else:
-                starten(0)
-                gestartet = 0
-            #Vorbereitung der Kaffeemaschine
-    if bereit == 0 and an==1 and fehler==0 :
-            
-                vorbereitung=1
-            
-            # Vorbereitung der Kaffeemaschine
-    if bereit() == 0 and an() == 1 and fehler() == 0:
-                vorbereitung = 1
-            
-            
+        einschalten=0
+        gestartet = 1
+       
+          #Starten der Kaffeemaschine per remote
+        if make_coffee() == 1 and an() == 1 and bereit() == 1 and fehler() == 0 and gestartet == 1:
+        starten=1
+        time.sleep(1)
+        starten=0
+        make_coffee = 0
+        in_process = 1
+    
            
-            # Kaffeemaschine fertig
-    if bereit() == 1 and an() == 1 and fehler() == 0 and gestartet == 1:
+            # Kaffee fertig
+    if bereit() == 1 and an() == 1 and fehler() == 0 and in_process == 1:
                 kaffee_fertig=1
-                gestartet = 0
+                in_process = 0
     else:
-               kaffee_fertig=0            
+        kaffee_fertig=0            
     
     # Fehlerbehandlung
     if fehler() == 1:
@@ -163,8 +160,5 @@ while True:
     else:
         fehler(0)
 
-    if bohnen_voll() == 1:
-        bohnen_voll(1)
-
-    if Wasser_voll() == 1:
-        Wasser_voll(1)
+   
+   
