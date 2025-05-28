@@ -57,7 +57,7 @@ def mqtt_callback(topic, msg):
             if  command['command']=='make_coffee':
                 kaffee_machen=1
                
-               if kaffee_fertig==1:
+                if kaffee_fertig==1:
                     print(command)
                     client.publish(MQTT_TOPIC_RETURN, json.dumps(command))
 
@@ -112,8 +112,8 @@ while True:
                 "starten": starten.value(),
 
                 # ---komunikation---
-                "kaffee_machen": kaffee_machen,
-                "vorbereitung": vorbereitung,
+                "kaffee_machen": make_coffee,
+                #"vorbereitung": vorbereitung,
                 "kaffee_fertig": kaffee_fertig,
                 
             }
@@ -139,7 +139,7 @@ while True:
         gestartet = 1
        
           #Starten der Kaffeemaschine per remote
-        if make_coffee() == 1 and an() == 1 and bereit() == 1 and fehler() == 0 and gestartet == 1:
+    if make_coffee() == 1 and an() == 1 and bereit() == 1 and fehler() == 0 and gestartet == 1:
         starten=1
         time.sleep(1)
         starten=0
