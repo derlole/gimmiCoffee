@@ -11,6 +11,7 @@ import random
 
 @unsecure.route('/')
 def index():
+    """Render the main page with user validation."""
     username = request.args.get('username')
     userid = request.args.get('userid')
 
@@ -32,6 +33,7 @@ def index():
 
 @unsecure.route('/verify', methods=['POST'])
 def verify():
+    """Verify user credentials and redirect accordingly."""
     username = request.args.get('username')
     password = request.args.get('pass')
 
@@ -48,6 +50,7 @@ def verify():
 
 @unsecure.route('/register', methods=['POST'])
 def register():
+    """Register a new user and redirect to the login page."""
     username = request.args.get('username')
     password = request.args.get('pass')
     userid = random.randint(10000, 99999)
@@ -61,10 +64,12 @@ def register():
 
 @unsecure.route('/login')
 def login():
+    """Render the login page."""
     return render_template('login.html')
 
 @unsecure.route('/refill-water', methods=['POST'])
 def update_water():
+    """Refill the water tank and update the water status."""
     water = load_dict("water")
     water["lastFilled"] = datetime.now()
     water["fill"] = 100
@@ -76,6 +81,7 @@ def update_water():
 
 @unsecure.route('/refill-beans', methods=['POST'])
 def update_beans():
+    """Refill the beans container and update the beans status."""
     beans = load_dict("beans")
     beans["lastFilled"] = datetime.now()
     beans["fill"] = 100
@@ -87,14 +93,17 @@ def update_beans():
 
 @unsecure.route('/coffees-made')
 def coffees_made():
+    """Render the coffees made page with a list of coffees."""
     coffees = get_coffees()
     return render_template('coffees.html', title='gimmiCoffee', coffees=coffees)
 
 @unsecure.route('/water')
 def water():
+    """Render the water status page."""
     water = load_dict("water")
     return render_template('water.html', title='gimmiCoffee', last_filled=datetime.strptime(water["lastFilled"], "%Y-%m-%d %H:%M:%S.%f"), current_level=water["fill"], total_refills=water["refilled"], coffees_made=water["coffeesOnFill"])
 @unsecure.route('/beans')
 def beans():
+    """Render the beans status page."""
     beans = load_dict("beans")
     return render_template('beans.html', title='gimmiCoffee', last_filled=datetime.strptime(beans["lastFilled"], "%Y-%m-%d %H:%M:%S.%f"), current_level=beans["fill"], total_refills=beans["refilled"], coffees_made=beans["coffeesOnFill"])

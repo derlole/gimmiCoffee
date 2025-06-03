@@ -19,6 +19,7 @@ MQTT_TOPIC = "coffee/command"
 
 @esp.route('/online', methods=['POST'])
 def esp_online():
+    """Endpoint to mark the ESP as online and update its connection info."""
     data = request.get_json()
     sender_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     esp_ip = data.get("ip", "unknown")
@@ -32,6 +33,7 @@ def esp_online():
 
 @esp.route('/toggle-machine', methods=['POST'])
 def toggle_machine():
+    """Endpoint to toggle the coffee machine state."""
     fullCommand = create_toggle_machine()
 
     new_status = load_dict("machine")
@@ -48,6 +50,7 @@ def toggle_machine():
 
 @esp.route('/make_coffee', methods=['POST'])
 def make_coffee():
+    """Endpoint to create a command to make coffee."""
     fullCommand = create_make_coffee()
 
     client = mqtt.Client()

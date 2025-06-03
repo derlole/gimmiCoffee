@@ -23,6 +23,7 @@ from modules.socketio import resend_static_data
 from modules.db import create_coffee_entry
 
 def track_coffee_made(data, flanksUp, flanksDown):
+    """Track if coffee has been made based on the ESP data."""
     coffee_made = False
     #logic for tracking coffee made
 
@@ -34,18 +35,21 @@ def track_coffee_made(data, flanksUp, flanksDown):
     return 
 
 def track_error_water(data, flanksUp, flanksDown):
+    """Track if there could be an error with water."""
     water = load_dict("water")
     if water["fill"] <= 7:
         return True
     return False
 
 def track_error_beans(data, flanksUp, flanksDown):
+    """Track if there could be an error with beans."""
     beans = load_dict("beans")
     if beans["fill"] <= 7:
         return True
     return False
 
 def track_error(data, flanksUp, flanksDown):
+    """Backrrack an Coffee machine error."""
     if track_error_water(data, flanksUp, flanksDown):
         return "Wasser Leer"
     elif track_error_beans(data, flanksUp, flanksDown):
@@ -53,6 +57,8 @@ def track_error(data, flanksUp, flanksDown):
     return "Unbekannter Fehler"
 
 def refactor_and_use_esp_data(data):
+    """Refactor and use the ESP data to update the machine state.
+    Calls track_coffee_made() and track_error functions()."""
     # global oldDataSet
     if 'oldDataSet' not in globals() or oldDataSet is None:
         oldDataSet = data  # Initialize oldDataSet with default values

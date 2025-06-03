@@ -74,7 +74,7 @@ class User:
         
     @staticmethod
     def validate_user(username, userid):
-        """Prüft, ob ein Benutzer mit E-Mail + Passwort existiert"""
+        """Prüft, ob ein Benutzer mit E-Mail + ID existiert"""
         db_path = os.path.join("db", "user.db")
         with sqlite3.connect(db_path) as conn:
             c = conn.cursor()

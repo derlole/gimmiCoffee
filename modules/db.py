@@ -43,6 +43,7 @@ def get_coffees():
     return coffees
 
 def create_toggle_machine():
+    """Create a command to toggle the coffee machine."""
     randID = random.randint(1000, 9999)
     fullCommand = {'command': 'toggle_machine', 'status': 'pending', 'command_id': randID}
     conn = sqlite3.connect(DB_PATH)
@@ -60,6 +61,7 @@ def create_toggle_machine():
     return fullCommand
 
 def create_make_coffee():
+    """Create a command to make coffee."""
     randID = random.randint(1000, 9999)
     fullCommand = {'command': 'make_coffee', 'status': 'pending', 'command_id': randID}
     conn = sqlite3.connect(DB_PATH)
@@ -75,6 +77,7 @@ def create_make_coffee():
     return fullCommand
 
 def create_coffee_entry():
+    """Create a coffee entry in the coffee database."""
     conn = sqlite3.connect(DB_PATH_COFFEE)
     cursor = conn.cursor()
     cursor.execute("""

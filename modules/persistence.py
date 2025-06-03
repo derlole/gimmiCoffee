@@ -7,12 +7,15 @@ BASE_PATH = os.path.abspath(BASE_PATH)
 
 
 def save_dict(name, data):
+    """Saves a dictionary to a JSON file."""
     path = os.path.join(BASE_PATH, f"{name}.json")
     os.makedirs(BASE_PATH, exist_ok=True)
     with open(path, "w") as f:
         json.dump(data, f, default=str, indent=2)
 
 def load_dict(name):
+    """Loads a dictionary from a JSON file.
+    returns the data or an empty dict if the file does not exist."""
     path = os.path.join(BASE_PATH, f"{name}.json")
     if os.path.exists(path):
         with open(path, "r") as f:

@@ -32,6 +32,7 @@ app.register_blueprint(esp)
 
 # MQTT Callback-Funktionen
 def on_connect(client, userdata, flags, rc):
+    """Callback-Funktion, die aufgerufen wird, wenn der Client sich mit dem Broker verbindet."""
     print(f"[MQTT] Verbunden mit Code {rc}")
     client.subscribe(MQTT_TOPIC_SUB)
     client.subscribe(MQTT_TOPIC_RETURN)
@@ -39,6 +40,7 @@ def on_connect(client, userdata, flags, rc):
     print(f"[MQTT] Subscribed to topic: {MQTT_TOPIC_SUB}")
 
 def on_message(client, userdata, msg):
+    """Callback-Funktion, die aufgerufen wird, wenn eine Nachricht empfangen wird."""
     if msg.topic == MQTT_TOPIC_SUB:
         print(f"[MQTT] Nachricht empfangen: {msg.topic} -> {msg.payload.decode()}")
         esp_conn_infos["last_seen"] = datetime.now()
@@ -60,6 +62,7 @@ def on_message(client, userdata, msg):
     
 # MQTT-Thread
 def mqtt_thread():
+    """Thread, der die MQTT-Verbindung aufbaut und Nachrichten verarbeitet."""
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
@@ -68,7 +71,7 @@ def mqtt_thread():
 
 # DB-Cleanup-Thread
 def cleanup_old_commands():
-
+    """Thread, der alle 5 Minuten die Datenbank nach 'pending' Befehlen durchsucht und diese auf 'failed' setzt, wenn sie älter als 5 Minuten sind."""
     db_path = os.path.join(os.path.dirname(__file__), "db", "commands.db")
 
     while True:
@@ -97,6 +100,7 @@ def cleanup_old_commands():
 
 # Clear commands DB
 def clear_commands_db():
+    """Löscht alle Einträge in der commands- und coffee-Tabelle der Datenbank."""
     import os
     import sqlite3
 
@@ -121,6 +125,7 @@ def clear_commands_db():
 
 # Motitior ESP-Connection
 def monitor_esp_connection():
+    """Überwacht die Verbindung zum ESP und setzt die Verbindung auf ungültig, wenn der ESP länger als 3 Minuten nicht gesehen wurde."""
     while True:
         if esp_conn_infos["last_seen"]:
             time_diff = datetime.now() - esp_conn_infos["last_seen"]
