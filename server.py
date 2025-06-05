@@ -141,6 +141,7 @@ threading.Thread(target=monitor_esp_connection, daemon=True).start()
 threading.Thread(target=mqtt_thread, daemon=True).start()
 
 if __name__ == '__main__':
+    #
     #clear_commands_db()
     socketio.run(app, host='0.0.0.0', port=3060, allow_unsafe_werkzeug=True)
 
