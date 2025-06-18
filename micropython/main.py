@@ -7,7 +7,7 @@ import urequests
 
 # MQTT-Konfiguration
 MQTT_BROKER = "lires.de"  
-MQTT_PORT = 1883
+MQTT_PORT = 1884
 MQTT_CLIENT_ID = "esp8266_coffee"
 MQTT_TOPIC_STATUS = b"coffee/status"
 MQTT_TOPIC_COMMAND = b"coffee/command"
@@ -26,15 +26,17 @@ Wasser_voll = Pin(13, Pin.IN)
 # --- Ausgänge ---
 einschalten = Pin(0, Pin.OUT)
 starten = Pin(15, Pin.OUT)
-
+einschalten.value(1)
+starten.value(1)
 # --- Status ---
 toggle_machine=0
 gestartet = 0
 
 make_coffee= 0
-
+counter_negirp=0
 kaffee_fertig = 0
 in_process = 0
+counter=0
 
 
 def mqtt_callback(topic, msg):
@@ -44,11 +46,13 @@ def mqtt_callback(topic, msg):
     print(f'Payload: {msg.decode()}')
     print('-------------------------')
     try:
+        global toggle_machine, make_coffee, kaffee_fertig, gestartet, in_process
         command = json.loads(msg.decode())
         if topic == MQTT_TOPIC_COMMAND:
             if  command['command']=='toggle_machine':
+                
                 toggle_machine=1
-                if gestartet.value() == 1:
+                if gestartet == 1:
                     command['status']='served'
                    
                 print(command)
@@ -93,13 +97,42 @@ except Exception as e:
 
 send_online_status()
 
+def interrupt_handler(pin):
+    if pin is an:
+        if an.value() == 1:
+            
+            an.value(1)
+        else:
+            print("'an' FALLING event")
+            an.value(0)  
+    elif pin is bereit:
+        if bereit.value() == 1:
+            print("'bereit' RISING event")
+        else:
+            print("'bereit' FALLING event")
+            bereit.value(0)
+            counter_negirp = counter_negirp + 1
+    elif pin is fehler:
+        if fehler.value() == 1:
+            print("'fehler' RISING event")
+            
+            fehler.value(1)
+        else:
+            print("'fehler' FALLING event")
+            
+            fehler.value(0)
+
+# Interrupts für die Eingänge einrichten
+an.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=interrupt_handler)
+bereit.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=interrupt_handler)
+fehler.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=interrupt_handler)
 
 # Hauptschleife
 while True:
     try:
-        if client:
+    	if client:
             client.check_msg()  # Prüfe auf neue MQTT-Nachrichten
-            
+
             # Status senden
             status = {
                 # ---IOs---
@@ -114,37 +147,44 @@ while True:
                 # ---komunikation---
                 "kaffee_machen": make_coffee,
                 #"vorbereitung": vorbereitung,
-                "kaffee_fertig": kaffee_fertig,
-                
+                "kaffee_fertig": kaffee_fertig, 
             }
             client.publish(MQTT_TOPIC_STATUS, json.dumps(status))
-        else:
+            # print(starten.value(), einschalten.value())
+        else:   
             # Versuche Neuverbindung
             try:
-                client = connect_mqtt()
+                    client = connect_mqtt()
             except:
-                pass
+                    pass
                 
-        time.sleep(3) # Warte 5 Sekunden zwischen den Status-Updates
+       
         
     except Exception as e:
         print('Fehler in Hauptschleife:', e)
         time.sleep(5)
         client = None
+    time.sleep(1)  # Kurze Pause, um CPU-Last zu reduzieren	
+    if counter_negirp >2:
+        bereit.value(0)
+        counter_negirp = 0
+
+    print(toggle_machine, an.value(), bereit.value(), fehler.value())
         # Einschalten der Kaffeemaschine per remote
-    if toggle_machine.value() == 1 and an.value() == 0 and bereit.value() == 0 and fehler.value() == 0:
-        einschalten=1
-        time.sleep(1)
-        einschalten=0
+    if toggle_machine == 1 and an.value() == 0 and bereit.value() == 0 and fehler.value() == 0:
+        einschalten.value(0)
         gestartet = 1
-       
+        print("Kaffeemaschine eingeschaltet")
+        toggle_machine = 0
+
           #Starten der Kaffeemaschine per remote
-    if make_coffee() == 1 and an() == 1 and bereit() == 1 and fehler() == 0 and gestartet == 1:
-        starten=1
+    if make_coffee == 1 and an.value() == 1 and bereit.value() == 1 and fehler.value() == 0 and gestartet == 1:
+        starten.value(0)
         time.sleep(1)
-        starten=0
+        starten.value(1)
         make_coffee = 0
         in_process = 1
+        print("Kaffeemaschine gestartet")
     
            
             # Kaffee fertig
@@ -160,5 +200,4 @@ while True:
     else:
         fehler(0)
 
-   
-   
+
