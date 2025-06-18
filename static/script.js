@@ -96,6 +96,9 @@ function toggleMachine() {
         });
 }
 function makeCoffee(){
+    if (gebId("machine-status-butt").classList.contains("deniePress")){
+        return;
+    }
     console.log("makeCoffee")
     fetch('/unsecure/esp/make_coffee', {method: 'POST'})
         .then(res => res.json())
