@@ -74,7 +74,7 @@ def refactor_and_use_esp_data(data):
     machine = load_dict("machine")
     if data["an"] == 1:
         machine["state"] = "ON"
-    elif data["an"] == 0:                   #elif die Sängerin xD
+    elif data["an"] == 0:                   #elif die Sängerin xD :)
         machine["state"] = "OFF"
 
     if data["bereit"] == 1:

@@ -1,0 +1,8 @@
+db.py legt in die Sachen in Datenbank ab. welchen DB typ nutzen wir ? SQlite :)
+obj ist unsere Obket oreniteung und der Benutzer si da objket ?
+Ist scoket io der Datenbroker zwischen server und ESp ?
+Was macht persistence?
+Routes ist der Empfang der Daten von Esp als auch website oder?
+Warum Static für die CSS/js sachen ?
+Warum sind die CSS un JS augelagert ? 
+
