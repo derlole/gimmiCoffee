@@ -74,6 +74,18 @@ def create_make_coffee():
 
     conn.commit()
     conn.close()
+    #temp --------------------------------------------
+    conn = sqlite3.connect(DB_PATH_COFFEE)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO coffee (user, status)
+        VALUES (?, ?)
+    """, ("admin", "served"))
+    conn.commit()
+    conn.close()
+    #temp --------------------------------------------
+    
+
     return fullCommand
 
 def create_coffee_entry():

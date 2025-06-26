@@ -68,11 +68,11 @@ socket.on('static_data', (data) => {
         gebId("machiene-error-text").innerText = "Keiner";
     }
     machienReady = gebId("machine-ready-butt")
-    makeCoffee = gebId("make-coffee-butt")
+    makeCoffeeVar2 = gebId("make-coffee-butt")
     if(data.machine.ready && data.machine.state == "ON" && !data.machine.berror && data.esp_conn_infos.connection_valid){
-        makeCoffee.classList.remove("deniePress");
+        makeCoffeeVar2.classList.remove("deniePress");
     }else {
-        makeCoffee.classList.add("deniePress");
+        makeCoffeeVar2.classList.add("deniePress");
     }
     if(data.machine.ready){
         machienReady.classList.remove("initBackRed");

@@ -48,7 +48,7 @@ def toggle_machine():
 
     return jsonify({"status": json.dumps(fullCommand)})
 
-@esp.route('/make_coffee', methods=['POST'])
+@esp.route('/make-coffee', methods=['POST'])
 def make_coffee():
     """Endpoint to create a command to make coffee."""
     fullCommand = create_make_coffee()
@@ -57,5 +57,15 @@ def make_coffee():
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.publish(MQTT_TOPIC, json.dumps(fullCommand))
     client.disconnect()
+    water = load_dict("water")
+    water["fill"] = water["fill"] - 14
+    water["coffeesOnFill"] = water["coffeesOnFill"] + 1
+    save_dict("water", water)
+    beans = load_dict("beans")
+    beans["fill"] = beans["fill"] - 7
+    beans["coffeesOnFill"] = beans["coffeesOnFill"] + 1
+    save_dict("beans", beans)
+
+    resend_static_data()
 
     return jsonify({"status": json.dumps(fullCommand)})

@@ -22,7 +22,7 @@ gebId("ip_local").innerText = esp_conn_infos.ip_local
 gebId("valid_connection").innerText = esp_conn_infos.connection_valid
 gebId("last_seen").innerText = esp_conn_infos.last_seen
 machienReady = gebId("machine-ready-butt")
-makeCoffee = gebId("make-coffee-butt")
+makeCoffeeVar = gebId("make-coffee-butt")
 if(machine.status == "OFF"){
     gebId("machine-status").innerText = "AUS";
     gebId("machine-status-butt").classList.add("initBackRed");
@@ -32,7 +32,7 @@ if(machine.berror){
     gebId("machiene-error-text").innerText = machine.error;
 }
 if(machine.ready && machine.state == "ON" && !machine.berror && esp_conn_infos.connection_valid){
-    makeCoffee.classList.remove("deniePress");
+    makeCoffeeVar.classList.remove("deniePress");
 }
 if(machine.ready){
     machienReady.classList.remove("initBackRed");
@@ -100,11 +100,11 @@ function makeCoffee(){
         return;
     }
     console.log("makeCoffee")
-    fetch('/unsecure/esp/make_coffee', {method: 'POST'})
+    fetch('/unsecure/esp/make-coffee', {method: 'POST'})
         .then(res => res.json())
         .then(data =>{
             console.log(data)
-        })
+        });
 }
 function waterRefill(){
     if (gebId("water-fill").parentElement.classList.contains("deniePress")){

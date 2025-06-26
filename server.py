@@ -131,6 +131,7 @@ def monitor_esp_connection():
                 esp_conn_infos["connection_valid"] = False
                 data = load_dict("machine")
                 data["state"] = "OFF"
+                data["ready"] = False
                 save_dict("machine", data)
                 resend_static_data()
         time.sleep(60)  # einmal pro Minute die Verbindung zum ESP prüfen
